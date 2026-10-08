@@ -97,17 +97,28 @@ public class Celular {
         this.gama = gama;
     }
 
-    @Override
+        @Override
     public String toString() {
-        return "Celular{"
-                + "id=" + id
-                + ", modelo='" + modelo 
-                + ", precio=" + precio
-                + ", stock=" + stock
-                + ", sistemaOperativo=" + sistemaOperativo
-                + ", gama=" + gama
-                + ", marca=" + marca.getNombre()
-                + '}';
+        return """
+           +-------------------+----------------------+
+           | Campo             | Valor                |
+           +-------------------+----------------------+
+           | ID                | %-20d |
+           | Username          | %-20s |
+           | Contraseña        | %-20s |
+           | Precio            | $%-19.2f |
+           | Stock             | %-20d |
+           | Sistema operativo | %-20s |
+           | Gama              | %-20s |
+           +-------------------+----------------------+"""
+                .formatted(
+                        idCelular,
+                        modelo,
+                        idMarca,
+                        precio,
+                        stock,
+                        sistemaOperativo,
+                        gama);
     }
 
 }
