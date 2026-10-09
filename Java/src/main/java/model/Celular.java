@@ -2,15 +2,13 @@ package model;
 
 public class Celular {
 
-    private int id, stock;
+    private int idCelular, stock;
     private String modelo;
     private double precio;
     private Marca marca;
     private SistemaOperativo sistemaOperativo;
     private Gama gama;
 
-    public Celular(String modelo, double precio, int stock, SistemaOperativo so, Gama gama, Marca marca) {
-    }
 
     public enum SistemaOperativo {
         IOS, ANDROID
@@ -21,8 +19,8 @@ public class Celular {
     }
 
     //Constructor con todo para cuando se trae de la bd
-    public Celular(int id, int stock, String modelo, double precio, Marca marca, SistemaOperativo sistemaOperativo, Gama gama) {
-        this.id = id;
+    public Celular(int idCelular, int stock, String modelo, double precio, Marca marca, SistemaOperativo sistemaOperativo, Gama gama) {
+        this.idCelular = idCelular;
         this.stock = stock;
         this.modelo = modelo;
         this.precio = precio;
@@ -41,12 +39,8 @@ public class Celular {
         this.gama = gama;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public int getIdCelular() {
+        return idCelular;
     }
 
     public int getStock() {
@@ -114,7 +108,7 @@ public class Celular {
                 .formatted(
                         idCelular,
                         modelo,
-                        idMarca,
+                        marca,
                         precio,
                         stock,
                         sistemaOperativo,

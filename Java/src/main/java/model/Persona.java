@@ -1,34 +1,35 @@
 package model;
 
 public class Persona {
-    private int id;
-    private String nombre, identificacion, correo, telefono;
+    private int idPersona;
+    private String nombre;
+    private String apellido;
+    private String email;
+    private String identificacion;
+    private String telefono;
 
-    
-    //Constructor completo para traer desde BD
-    public Persona(int id, String nombre, String identificacion, String correo, String telefono) {
-        this.id = id;
+    // Constructor completo (desde BD)
+    public Persona(int idPersona, String nombre, String apellido, String email,String identificacion, String telefono) {
+        this.idPersona = idPersona;
         this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
         this.identificacion = identificacion;
-        this.correo = correo;
         this.telefono = telefono;
     }
 
-    //Constructor sin id para creacion de nueva persona
-    public Persona(String nombre, String identificacion, String correo, String telefono) {
+     // Constructor sin id (nueva persona), ahora con apellido
+    public Persona(String nombre, String apellido, String email,String identificacion, String telefono) {
         this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
         this.identificacion = identificacion;
-        this.correo = correo;
         this.telefono = telefono;
     }
-    
-    
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
+    //Getters y Setter
+    public int getIdPersona() {
+        return idPersona;
     }
 
     public String getNombre() {
@@ -39,20 +40,28 @@ public class Persona {
         this.nombre = nombre;
     }
 
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getIdentificacion() {
         return identificacion;
     }
 
     public void setIdentificacion(String identificacion) {
         this.identificacion = identificacion;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
     }
 
     public String getTelefono() {
@@ -63,16 +72,22 @@ public class Persona {
         this.telefono = telefono;
     }
 
+
+    
     @Override
     public String toString() {
-        return "Persona{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", identificacion='" + identificacion + '\'' +
-                ", correo='" + correo + '\'' +
-                ", telefono='" + telefono + '\'' +
-                '}';
+        return """
+           +-------------------+----------------------+
+           | Campo             | Valor                |
+           +-------------------+----------------------+
+           | ID                | %-20d |
+           | Nombre            | %-20s |
+           | Apellido          | %-20s |
+           | Email             | %-20s |
+           | Identificacion    | %-20s |
+           | Telefono          | %-20s |
+           +-------------------+----------------------+"""
+                .formatted(idPersona, nombre, apellido, email, identificacion, telefono);
     }
-    
-    
+ 
 }

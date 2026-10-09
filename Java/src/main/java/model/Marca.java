@@ -2,12 +2,12 @@ package model;
 
 public class Marca {
 
-    private int id;
+    private int idMarca;
     private String nombre;
 
     // Constructor completo para traer de la bd
-    public Marca(int id, String nombre) {
-        this.id = id;
+    public Marca(int idMarca, String nombre) {
+        this.idMarca = idMarca;
         this.nombre = nombre;
     }
 
@@ -16,12 +16,8 @@ public class Marca {
         this.nombre = nombre;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public int getIdMarca() {
+        return idMarca;
     }
 
     public String getNombre() {
@@ -32,13 +28,18 @@ public class Marca {
         this.nombre = nombre;
     }
 
-    @Override
+        @Override
     public String toString() {
-        return "Marca{"
-                + "id=" + id
-                + ", nombre='" + nombre + '\''
-                + '}';
+        return """
+           +-------------------+----------------------+
+           | Campo             | Valor                |
+           +-------------------+----------------------+
+           | ID                | %-20d |
+           | Nombre            | %-20s |
+           +-------------------+----------------------+"""
+                .formatted(
+                        idMarca,
+                        nombre);
     }
-         """
 
 }
