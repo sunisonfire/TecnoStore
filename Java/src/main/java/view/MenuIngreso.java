@@ -1,26 +1,75 @@
 package view;
 
+import dao.MarcaDao;
+import model.Celular;
+import model.Marca;
+import model.Celular.Gama;
+import model.Celular.SistemaOperativo;
+
 public class MenuIngreso {
-    
+
     Validaciones v = new Validaciones();
-    
-    public Producto ingresarProducto() {
-        String nombre = v.validarTexto("Ingrese el nombre");
+
+    public Celular ingresarCelular() {
+        String modelo = v.validarTexto("Ingrese el modelo");
+        double precio = v.validarEntero("Ingrese el precio");
         int stock = v.validarEntero("Ingrese el stock");
-        int stockMinimo = v.validarEntero("Ingrese el stock minimo");
-        int idBodega = v.validarEntero("Ingrese id de la bodega");
-        Bodega bodega = bodegaDao.buscar(idBodega);
-        if (bodega == null) {
-            System.out.println("La bodega no existe");
+
+        SistemaOperativo sistemaOperativo = elegirSistemaOperativo();
+        Gama gama = elegirGama();
+
+        int idMarca = v.validarEntero("Ingrese el id de la marca");
+        Marca marca = MarcaDao.buscar(idMarca);
+        if (marca == null) {
+            System.out.println("La marca no existe");
             return null;
         }
-        return new Producto(nombre, stock, stockMinimo, bodega);
+
+        return new Celular(stock, modelo, precio, marca, sistemaOperativo, gama);
     }
 
-    public Bodega ingresarBodega() {
-    String ciudad = v.validarTexto("Ingrese la ciudad de la bodega");
-    return new Bodega(ciudad);
-}
+    private SistemaOperativo elegirSistemaOperativo() {
+        while (true) {
+            System.out.println("Seleccione el sistema operativo:");
+            System.out.println("1. IOS");
+            System.out.println("2. ANDROID");
+            int opcion = v.validarEntero("Opción");
+
+            switch (opcion) {
+                case 1 -> {
+                    return SistemaOperativo.IOS;
+                }
+                case 2 -> {
+                    return SistemaOperativo.ANDROID;
+                }
+                default -> System.out.println("Opción inválida, intente de nuevo.");
+            }
+        }
+    }
+
+    private Gama elegirGama() {
+        while (true) {
+            System.out.println("Seleccione la gama:");
+            System.out.println("1. ALTA");
+            System.out.println("2. MEDIA");
+            System.out.println("3. BAJA");
+            int opcion = v.validarEntero("Opción");
+
+            switch (opcion) {
+                case 1 -> {
+                    return Gama.ALTA;
+                }
+                case 2 -> {
+                    return Gama.MEDIA;
+                }
+                case 3 -> {
+                    return Gama.BAJA;
+                }
+                default -> System.out.println("Opción inválida, intente de nuevo.");
+            }
+        }
+    }
+
 
     public int escogerOpcionPersona() {
 
@@ -31,6 +80,5 @@ public class MenuIngreso {
                                """);
 
     }
-
 
 }
