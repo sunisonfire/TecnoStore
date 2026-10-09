@@ -30,10 +30,16 @@ public class MenuIngreso {
 
     private SistemaOperativo elegirSistemaOperativo() {
         while (true) {
-            System.out.println("Seleccione el sistema operativo:");
-            System.out.println("1. IOS");
-            System.out.println("2. ANDROID");
-            int opcion = v.validarEntero("Opción");
+            int opcion = v.validarEntero("""
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                        Sistema operativo 
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+
+                       [ 1 ]  IOS
+                       [ 2 ]  ANDROID
+
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                    """);
 
             switch (opcion) {
                 case 1 -> {
@@ -49,11 +55,17 @@ public class MenuIngreso {
 
     private Gama elegirGama() {
         while (true) {
-            System.out.println("Seleccione la gama:");
-            System.out.println("1. ALTA");
-            System.out.println("2. MEDIA");
-            System.out.println("3. BAJA");
-            int opcion = v.validarEntero("Opción");
+            int opcion = v.validarEntero("""
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                             Gama 
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+
+                       [ 1 ]  ALTA
+                       [ 2 ]  MEDIA
+                       [ 3 ]  BAJA
+
+                    ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                    """);
 
             switch (opcion) {
                 case 1 -> {
@@ -70,14 +82,19 @@ public class MenuIngreso {
         }
     }
 
-
     public int escogerOpcionPersona() {
 
         return v.validarEntero("""
-                               1. Administrador
-                               2. Cliente
-                               3. Salir
-                               """);
+                ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                  ¿Cómo deseas ingresar?           
+                ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+
+                   [ 1 ]  Administrador
+                   [ 2 ]  Cliente
+                   [ 3 ]  Salir
+
+                ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
+                """);
 
     }
 

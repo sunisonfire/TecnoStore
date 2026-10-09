@@ -14,11 +14,21 @@ public class Administrador extends Persona {
     }
     
     //Getters y Setters
-    public int getIdAdministrador() { return idAdministrador; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public long getContraseña() { return contraseña; }
-    public void setContraseña(long contraseña) { this.contraseña = contraseña; }
+    public int getIdAdministrador() {
+        return idAdministrador; 
+    }
+    public String getUsername() {
+        return username; 
+    }
+    public void setUsername(String username) {
+        this.username = username; 
+    }
+    public long getContraseña() {
+        return contraseña; 
+    }
+    public void setContraseña(long contraseña) {
+        this.contraseña = contraseña; 
+    }
 
     
     @Override
