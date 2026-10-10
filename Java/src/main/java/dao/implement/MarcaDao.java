@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IMarcaDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import model.Marca;
 /**
  * DAO de marca. Lo usa CelularDao para armar la marca de cada celular.
  */
-public class MarcaDao {
+public class MarcaDao implements IMarcaDao {
 
     private final Conexion conexion = new Conexion();
 
@@ -31,6 +32,7 @@ public class MarcaDao {
     // ==================== C - create ====================
 
     // Inserta y deja el id generado en el objeto
+    @Override
     public boolean insertar(Marca marca) {
         String sql = "INSERT INTO marca (nombre) VALUES (?)";
 
@@ -57,14 +59,17 @@ public class MarcaDao {
 
     // ==================== R - read ====================
 
+    @Override
     public Marca obtenerPorId(int idMarca) {
         return obtenerUna(SELECT_BASE + " WHERE id_marca = ?", idMarca);
     }
 
+    @Override
     public Marca obtenerPorNombre(String nombre) {
         return obtenerUna(SELECT_BASE + " WHERE nombre = ?", nombre);
     }
 
+    @Override
     public List<Marca> obtenerTodos() {
         List<Marca> marcas = new ArrayList<>();
         String sql = SELECT_BASE + " ORDER BY nombre";
@@ -101,11 +106,13 @@ public class MarcaDao {
 
     // ---------- Duplicados ----------
 
+    @Override
     public boolean existeNombre(String nombre) {
         return existe("SELECT 1 FROM marca WHERE nombre = ?", nombre);
     }
 
     // Para actualizar: ¿otra marca distinta ya usa este nombre?
+    @Override
     public boolean existeNombreDeOtra(String nombre, int idMarca) {
         return existe("SELECT 1 FROM marca WHERE nombre = ? AND id_marca <> ?", nombre, idMarca);
     }
@@ -128,6 +135,7 @@ public class MarcaDao {
 
     // ==================== U - update ====================
 
+    @Override
     public boolean actualizar(Marca marca) {
         String sql = "UPDATE marca SET nombre = ? WHERE id_marca = ?";
 
@@ -145,6 +153,7 @@ public class MarcaDao {
 
     // ==================== D - delete ====================
 
+    @Override
     public boolean eliminar(int idMarca) {
         String sql = "DELETE FROM marca WHERE id_marca = ?";
 

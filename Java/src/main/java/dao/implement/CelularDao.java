@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.ICelularDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import model.Marca;
  * DAO de celular. Depende de MarcaDao para armar la marca de cada celular.
  * Los métodos de stock con Connection se usan dentro de la transacción de VentaDao.
  */
-public class CelularDao {
+public class CelularDao implements ICelularDao {
 
     private final Conexion conexion = new Conexion();
     private final MarcaDao marcaDao = new MarcaDao();   // debe tener obtenerPorId(int)
@@ -43,6 +44,7 @@ public class CelularDao {
     // ==================== C - create ====================
 
     // Inserta y deja el id generado en el objeto
+    @Override
     public boolean insertar(Celular celular) {
         String sql = """
                 INSERT INTO celular (id_marca, modelo, stock, sistema_operativo, gama, precio)
@@ -77,6 +79,7 @@ public class CelularDao {
 
     // ==================== R - read ====================
 
+    @Override
     public Celular obtenerPorId(int idCelular) {
         String sql = SELECT_BASE + " WHERE id_celular = ?";
 
@@ -95,10 +98,12 @@ public class CelularDao {
         return null;
     }
 
+    @Override
     public List<Celular> obtenerTodos() {
         return obtenerLista(SELECT_BASE + " ORDER BY modelo", null);
     }
 
+    @Override
     public List<Celular> obtenerPorMarca(int idMarca) {
         return obtenerLista(SELECT_BASE + " WHERE id_marca = ? ORDER BY modelo", idMarca);
     }
@@ -125,6 +130,7 @@ public class CelularDao {
 
     // ==================== U - update ====================
 
+    @Override
     public boolean actualizar(Celular celular) {
         String sql = """
                 UPDATE celular SET id_marca = ?, modelo = ?, stock = ?,
@@ -150,6 +156,7 @@ public class CelularDao {
     }
 
     // Fija el stock a un valor exacto (por ejemplo, desde el menú del administrador)
+    @Override
     public boolean actualizarStock(int idCelular, int nuevoStock) {
         String sql = "UPDATE celular SET stock = ? WHERE id_celular = ?";
 
@@ -167,6 +174,7 @@ public class CelularDao {
 
     // Para ventas: resta unidades solo si hay suficiente stock, en una sola operación.
     // Devuelve false si no alcanza el stock (así no queda negativo).
+    @Override
     public boolean descontarStock(Connection c, int idCelular, int cantidad) throws SQLException {
         String sql = "UPDATE celular SET stock = stock - ? WHERE id_celular = ? AND stock >= ?";
 
@@ -179,6 +187,7 @@ public class CelularDao {
     }
 
     // Para cancelar o eliminar una venta: devuelve las unidades al stock
+    @Override
     public boolean reponerStock(Connection c, int idCelular, int cantidad) throws SQLException {
         String sql = "UPDATE celular SET stock = stock + ? WHERE id_celular = ?";
 
@@ -191,6 +200,7 @@ public class CelularDao {
 
     // ==================== D - delete ====================
 
+    @Override
     public boolean eliminar(int idCelular) {
         String sql = "DELETE FROM celular WHERE id_celular = ?";
 

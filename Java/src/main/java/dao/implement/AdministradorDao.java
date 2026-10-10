@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IAdministradorDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import model.Administrador;
  * DAO de administrador. Los datos personales viven en la tabla persona, por eso
  * insertar, actualizar y eliminar se apoyan en PersonaDao dentro de una transacción.
  */
-public class AdministradorDao {
+public class AdministradorDao implements IAdministradorDao {
 
     private final Conexion conexion = new Conexion();
     private final PersonaDao personaDao = new PersonaDao();
@@ -43,6 +44,7 @@ public class AdministradorDao {
     // ==================== C - create ====================
 
     // Inserta en persona y luego en administrador. Deja el idPersona en el objeto.
+    @Override
     public boolean insertar(Administrador a) {
         String sql = "INSERT INTO administrador (id_persona, username, contrasena) VALUES (?, ?, ?)";
 
@@ -75,6 +77,7 @@ public class AdministradorDao {
     // ==================== R - read ====================
 
     // Inicio de sesión: el administrador si username y contraseña coinciden, o null
+    @Override
     public Administrador login(String username, long contrasena) {
         String sql = SELECT_BASE + " WHERE a.username = ? AND a.contrasena = ?";
 
@@ -94,6 +97,7 @@ public class AdministradorDao {
         return null;
     }
 
+    @Override
     public Administrador obtenerPorId(int idAdministrador) {
         String sql = SELECT_BASE + " WHERE a.id_administrador = ?";
 
@@ -112,6 +116,7 @@ public class AdministradorDao {
         return null;
     }
 
+    @Override
     public List<Administrador> obtenerTodos() {
         List<Administrador> administradores = new ArrayList<>();
         String sql = SELECT_BASE + " ORDER BY p.nombre, p.apellido";
@@ -131,20 +136,24 @@ public class AdministradorDao {
 
     // ---------- Duplicados ----------
 
+    @Override
     public boolean existeUsername(String username) {
         return existe("SELECT 1 FROM administrador WHERE username = ?", username);
     }
 
     // Para actualizar: ¿otro administrador distinto ya usa este username?
+    @Override
     public boolean existeUsernameDeOtro(String username, int idAdministrador) {
         return existe("SELECT 1 FROM administrador WHERE username = ? AND id_administrador <> ?",
                 username, idAdministrador);
     }
 
+    @Override
     public boolean existeEmail(String email) {
         return personaDao.existeEmail(email);
     }
 
+    @Override
     public boolean existeIdentificacion(String identificacion) {
         return personaDao.existeIdentificacion(identificacion);
     }
@@ -168,6 +177,7 @@ public class AdministradorDao {
     // ==================== U - update ====================
 
     // Actualiza persona y administrador en una sola transacción
+    @Override
     public boolean actualizar(Administrador a) {
         String sql = "UPDATE administrador SET username = ?, contrasena = ? WHERE id_administrador = ?";
 
@@ -198,6 +208,7 @@ public class AdministradorDao {
     // ==================== D - delete ====================
 
     // Borra el administrador y luego su persona
+    @Override
     public boolean eliminar(int idAdministrador) {
         Administrador a = obtenerPorId(idAdministrador);
         if (a == null) {

@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IPersonaDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import model.Persona;
  * (ClienteDao, AdministradorDao) y lanzan SQLException para que ese DAO haga el
  * rollback. Los métodos sin Connection abren y cierran la suya.
  */
-public class PersonaDao {
+public class PersonaDao implements IPersonaDao {
 
     private final Conexion conexion = new Conexion();
 
@@ -38,6 +39,7 @@ public class PersonaDao {
 
     // ==================== C - create ====================
     // Versión para transacciones: usa la conexión recibida y deja el id en p
+    @Override
     public boolean insertar(Connection c, Persona p) throws SQLException {
         String sql = "INSERT INTO persona (nombre, apellido, email, identificacion, telefono) VALUES (?, ?, ?, ?, ?)";
 
@@ -63,6 +65,7 @@ public class PersonaDao {
     }
 
     // Versión independiente
+    @Override
     public boolean insertar(Persona p) {
         try (Connection c = conexion.conexion()) {
             return insertar(c, p);
@@ -73,18 +76,22 @@ public class PersonaDao {
     }
 
     // ==================== R - read ====================
+    @Override
     public Persona obtenerPorId(int idPersona) {
         return obtenerUna(SELECT_BASE + " WHERE id_persona = ?", idPersona);
     }
 
+    @Override
     public Persona obtenerPorEmail(String email) {
         return obtenerUna(SELECT_BASE + " WHERE email = ?", email);
     }
 
+    @Override
     public Persona obtenerPorIdentificacion(String identificacion) {
         return obtenerUna(SELECT_BASE + " WHERE identificacion = ?", identificacion);
     }
 
+    @Override
     public List<Persona> obtenerTodos() {
         List<Persona> personas = new ArrayList<>();
         String sql = SELECT_BASE + " ORDER BY nombre, apellido";
@@ -117,20 +124,24 @@ public class PersonaDao {
     }
 
     // ---------- Duplicados (consultas livianas, sin armar objetos) ----------
+    @Override
     public boolean existeEmail(String email) {
         return existe("SELECT 1 FROM persona WHERE email = ?", email);
     }
 
+    @Override
     public boolean existeIdentificacion(String identificacion) {
         return existe("SELECT 1 FROM persona WHERE identificacion = ?", identificacion);
     }
 
     // Para actualizar: ¿otra persona distinta ya usa este correo?
+    @Override
     public boolean existeEmailDeOtra(String email, int idPersona) {
         return existe("SELECT 1 FROM persona WHERE email = ? AND id_persona <> ?", email, idPersona);
     }
 
     // Para actualizar: ¿otra persona distinta ya usa esta identificación?
+    @Override
     public boolean existeIdentificacionDeOtra(String identificacion, int idPersona) {
         return existe("SELECT 1 FROM persona WHERE identificacion = ? AND id_persona <> ?", identificacion, idPersona);
     }
@@ -151,6 +162,7 @@ public class PersonaDao {
     }
 
     // ==================== U - update ====================
+    @Override
     public boolean actualizar(Connection c, Persona p) throws SQLException {
         String sql = "UPDATE persona SET nombre = ?, apellido = ?, email = ?, identificacion = ?, telefono = ? WHERE id_persona = ?";
 
@@ -165,6 +177,7 @@ public class PersonaDao {
         }
     }
 
+    @Override
     public boolean actualizar(Persona p) {
         try (Connection c = conexion.conexion()) {
             return actualizar(c, p);
@@ -175,6 +188,7 @@ public class PersonaDao {
     }
 
     // ==================== D - delete ====================
+    @Override
     public boolean eliminar(Connection c, int idPersona) throws SQLException {
         try (PreparedStatement ps = c.prepareStatement("DELETE FROM persona WHERE id_persona = ?")) {
             ps.setInt(1, idPersona);
@@ -182,6 +196,7 @@ public class PersonaDao {
         }
     }
 
+    @Override
     public boolean eliminar(int idPersona) {
         try (Connection c = conexion.conexion()) {
             return eliminar(c, idPersona);

@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IClienteDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import model.Cliente;
  * DAO de cliente. Los datos personales viven en la tabla persona, por eso
  * insertar, actualizar y eliminar se apoyan en PersonaDao dentro de una transacción.
  */
-public class ClienteDao {
+public class ClienteDao implements IClienteDao {
 
     private final Conexion conexion = new Conexion();
     private final PersonaDao personaDao = new PersonaDao();
@@ -40,6 +41,7 @@ public class ClienteDao {
     // ==================== C - create (registrarse) ====================
 
     // Inserta en persona y luego en cliente. Deja el idPersona en el objeto.
+    @Override
     public boolean insertar(Cliente cl) {
         String sql = "INSERT INTO cliente (id_persona) VALUES (?)";
 
@@ -70,14 +72,17 @@ public class ClienteDao {
     // ==================== R - read ====================
 
     // Inicio de sesión: el cliente con ese correo, o null si no existe
+    @Override
     public Cliente login(String email) {
         return obtenerUno(SELECT_BASE + " WHERE p.email = ?", email);
     }
 
+    @Override
     public Cliente obtenerPorId(int idCliente) {
         return obtenerUno(SELECT_BASE + " WHERE cl.id_cliente = ?", idCliente);
     }
 
+    @Override
     public List<Cliente> obtenerTodos() {
         List<Cliente> clientes = new ArrayList<>();
         String sql = SELECT_BASE + " ORDER BY p.nombre, p.apellido";
@@ -114,18 +119,22 @@ public class ClienteDao {
 
     // ---------- Duplicados (delegan en PersonaDao) ----------
 
+    @Override
     public boolean existeEmail(String email) {
         return personaDao.existeEmail(email);
     }
 
+    @Override
     public boolean existeIdentificacion(String identificacion) {
         return personaDao.existeIdentificacion(identificacion);
     }
 
+    @Override
     public boolean existeEmailDeOtro(String email, int idPersona) {
         return personaDao.existeEmailDeOtra(email, idPersona);
     }
 
+    @Override
     public boolean existeIdentificacionDeOtro(String identificacion, int idPersona) {
         return personaDao.existeIdentificacionDeOtra(identificacion, idPersona);
     }
@@ -133,6 +142,7 @@ public class ClienteDao {
     // ==================== U - update ====================
 
     // Todos los datos del cliente están en persona
+    @Override
     public boolean actualizar(Cliente cl) {
         return personaDao.actualizar(cl);
     }
@@ -140,6 +150,7 @@ public class ClienteDao {
     // ==================== D - delete ====================
 
     // Borra el cliente y luego su persona
+    @Override
     public boolean eliminar(int idCliente) {
         Cliente cl = obtenerPorId(idCliente);
         if (cl == null) {

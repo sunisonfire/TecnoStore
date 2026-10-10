@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IVentaDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import model.Venta;
  * DAO de venta. Insertar y actualizar guardan la venta y sus detalles en una
  * sola transacción; si algo falla, no queda nada a medias.
  */
-public class VentaDao {
+public class VentaDao implements IVentaDao {
 
     private final Conexion conexion = new Conexion();
     private final DetalleVentaDao detalleVentaDao = new DetalleVentaDao();
@@ -71,6 +72,7 @@ public class VentaDao {
     // ==================== C - create ====================
 
     // Inserta la venta y todos sus detalles. Deja los ids generados en los objetos.
+    @Override
     public boolean insertar(Venta v) {
         String sql = """
                 INSERT INTO venta (id_cliente, fecha_hora, metodo_pago, estado, lugar, subtotal, total)
@@ -112,6 +114,7 @@ public class VentaDao {
 
     // ==================== R - read ====================
 
+    @Override
     public Venta obtenerPorId(int idVenta) {
         String sql = SELECT_BASE + " WHERE v.id_venta = ?";
 
@@ -130,11 +133,13 @@ public class VentaDao {
         return null;
     }
 
+    @Override
     public List<Venta> obtenerTodos() {
         return obtenerLista(SELECT_BASE + " ORDER BY v.fecha_hora DESC", null);
     }
 
     // Ventas de un cliente (para "Ver mis pedidos")
+    @Override
     public List<Venta> obtenerPorCliente(int idCliente) {
         return obtenerLista(SELECT_BASE + " WHERE v.id_cliente = ? ORDER BY v.fecha_hora DESC", idCliente);
     }
@@ -162,6 +167,7 @@ public class VentaDao {
     // ==================== U - update ====================
 
     // Actualiza la venta y reemplaza sus detalles por los que tiene el objeto
+    @Override
     public boolean actualizar(Venta v) {
         String sql = """
                 UPDATE venta SET id_cliente = ?, fecha_hora = ?, metodo_pago = ?, estado = ?,
@@ -196,6 +202,7 @@ public class VentaDao {
     }
 
     // Solo cambia el estado (ENVIADO, CANCELADO...)
+    @Override
     public boolean actualizarEstado(int idVenta, Venta.Estado estado) {
         String sql = "UPDATE venta SET estado = ? WHERE id_venta = ?";
 
@@ -214,6 +221,7 @@ public class VentaDao {
     // ==================== D - delete ====================
 
     // Borra los detalles y luego la venta
+    @Override
     public boolean eliminar(int idVenta) {
         String sql = "DELETE FROM venta WHERE id_venta = ?";
 

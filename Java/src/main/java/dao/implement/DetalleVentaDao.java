@@ -1,5 +1,6 @@
 package dao.implement;
 
+import dao.Interfaces.IDetalleVenta;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import model.DetalleVenta;
  * insertar recibe el idVenta. Los métodos con Connection se usan dentro de la
  * transacción de VentaDao.
  */
-public class DetalleVentaDao {
+public class DetalleVentaDao implements IDetalleVenta {
 
     private final Conexion conexion = new Conexion();
     private final CelularDao celularDao = new CelularDao();   // debe tener obtenerPorId(int)
@@ -36,6 +37,7 @@ public class DetalleVentaDao {
     // ==================== C - create ====================
 
     // Versión para transacciones: usa la conexión recibida y deja el id en d
+    @Override
     public boolean insertar(Connection c, DetalleVenta d, int idVenta) throws SQLException {
         String sql = "INSERT INTO detalle_venta (id_venta, id_celular, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
 
@@ -60,6 +62,7 @@ public class DetalleVentaDao {
     }
 
     // Versión independiente
+    @Override
     public boolean insertar(DetalleVenta d, int idVenta) {
         try (Connection c = conexion.conexion()) {
             return insertar(c, d, idVenta);
@@ -71,6 +74,7 @@ public class DetalleVentaDao {
 
     // ==================== R - read ====================
 
+    @Override
     public DetalleVenta obtenerPorId(int idDetalleVenta) {
         String sql = SELECT_BASE + " WHERE id_detalle_venta = ?";
 
@@ -90,6 +94,7 @@ public class DetalleVentaDao {
     }
 
     // Todos los detalles de una venta
+    @Override
     public List<DetalleVenta> obtenerPorVenta(int idVenta) {
         List<DetalleVenta> detalles = new ArrayList<>();
         String sql = SELECT_BASE + " WHERE id_venta = ? ORDER BY id_detalle_venta";
@@ -112,6 +117,7 @@ public class DetalleVentaDao {
     // ==================== U - update ====================
 
     // Ojo: no recalcula subtotal y total de la venta. Para eso usa VentaDao.actualizar.
+    @Override
     public boolean actualizar(DetalleVenta d) {
         String sql = "UPDATE detalle_venta SET id_celular = ?, cantidad = ?, precio_unitario = ? WHERE id_detalle_venta = ?";
 
@@ -131,6 +137,7 @@ public class DetalleVentaDao {
 
     // ==================== D - delete ====================
 
+    @Override
     public boolean eliminar(int idDetalleVenta) {
         String sql = "DELETE FROM detalle_venta WHERE id_detalle_venta = ?";
 
@@ -146,6 +153,7 @@ public class DetalleVentaDao {
     }
 
     // Borra todos los detalles de una venta (dentro de la transacción de VentaDao)
+    @Override
     public void eliminarPorVenta(Connection c, int idVenta) throws SQLException {
         try (PreparedStatement ps = c.prepareStatement("DELETE FROM detalle_venta WHERE id_venta = ?")) {
             ps.setInt(1, idVenta);

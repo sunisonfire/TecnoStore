@@ -1,6 +1,7 @@
 package view.IngresoDatos;
 
 import dao.implement.MarcaDao;
+import java.util.List;
 import model.Celular;
 import model.Marca;
 import view.Validaciones.Entero;
@@ -8,33 +9,42 @@ import view.Validaciones.Texto;
 import view.Validaciones.Decimal;
 
 public class DatosCelular {
-        Entero v = new Entero();
-        Texto t= new Texto();
-        Decimal d= new Decimal();
+
+    Entero v = new Entero();
+    Texto t = new Texto();
+    Decimal d = new Decimal();
+
+    private final MarcaDao marcaDao = new MarcaDao();
 
     public Celular ingresarCelular() {
-        //Modelo
         String modelo = t.validarTexto("Ingrese el modelo del celular");
-        //Precio
         double precio = d.validarDecimal("Ingrese el precio");
-        //Stock
         int stock = v.validarEntero("Ingrese el stock");
-        //Sistema Operativo (Enum)
         Celular.SistemaOperativo sistemaOperativo = elegirSistemaOperativo();
-        //Gama (Enum)
         Celular.Gama gama = elegirGama();
-        //Marca como id
-        int idMarca = v.validarEntero("Ingrese el id de la marca");
-        Marca marca = MarcaDao.buscar(idMarca);
-        if (marca == null) {
-            System.out.println("La marca no existe");
+
+        // Marca: se muestran las que existen para que elija un id válido
+        List<Marca> marcas = marcaDao.obtenerTodos();
+        if (marcas.isEmpty()) {
+            System.out.println("No hay marcas registradas. Cree una marca primero.");
             return null;
         }
+        for (Marca m : marcas) {
+            System.out.println(m.getIdMarca() + ". " + m.getNombre());
+        }
+
+        Marca marca;
+        do {
+            int idMarca = v.validarEntero("Ingrese el id de la marca");
+            marca = marcaDao.obtenerPorId(idMarca);
+            if (marca == null) {
+                System.out.println("La marca no existe, intente de nuevo.");
+            }
+        } while (marca == null);
 
         return new Celular(stock, modelo, precio, marca, sistemaOperativo, gama);
     }
 
-    
     private Celular.SistemaOperativo elegirSistemaOperativo() {
         while (true) {
             int opcion = v.validarEntero("""
@@ -55,7 +65,8 @@ public class DatosCelular {
                 case 2 -> {
                     return Celular.SistemaOperativo.ANDROID;
                 }
-                default -> System.out.println("Opción inválida, intente de nuevo.");
+                default ->
+                    System.out.println("Opción inválida, intente de nuevo.");
             }
         }
     }
@@ -84,7 +95,8 @@ public class DatosCelular {
                 case 3 -> {
                     return Celular.Gama.BAJA;
                 }
-                default -> System.out.println("Opción inválida, intente de nuevo.");
+                default ->
+                    System.out.println("Opción inválida, intente de nuevo.");
             }
         }
     }
