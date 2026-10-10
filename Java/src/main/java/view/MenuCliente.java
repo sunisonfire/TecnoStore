@@ -1,28 +1,27 @@
 package view;
 
+import view.Validaciones.EnteroRango;
+
 public class MenuCliente {
 
-    Validaciones v = new Validaciones();
+    EnteroRango v = new EnteroRango();
 
     public int escogerTipoLogin() {
-
-        return v.validarEntero("""
+        return v.validarEnteroRango("""
                 ╭───────────────────────────╮
                       ✦ Bienvenido ✦
                 ╰───────────────────────────╯
 
                    ⟮1⟯  Registrarse
                    ⟮2⟯  Iniciar Sesión
-                   ⟮5⟯  Salir
+                   ⟮0⟯  Salir
 
                 ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-                """);
-
+                """, 0, 2);
     }
 
     public int opcionAccionCliente() {
-
-        return v.validarEntero("""
+        return v.validarEnteroRango("""
                 ╭──────────────────────────────╮
                        ✦ Mi Cuenta ✦
                 ╰──────────────────────────────╯
@@ -31,51 +30,14 @@ public class MenuCliente {
                    ⟮2⟯  Ver mi perfil
                    ⟮3⟯  Actualizar mi perfil
                    ⟮4⟯  Eliminar cuenta
-                   ⟮5⟯  Salir
+                   ⟮0⟯  Salir
 
                 ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-                """);
-
-    }
-
-    public int gestionPedido() {
-
-        return v.validarEntero("""
-                ╭─────────────────────────────────╮
-                    ✦ Gestionar Pedidos ✦
-                ╰─────────────────────────────────╯
-
-                   ⟮1⟯  Crear Pedido
-                   ⟮2⟯  Actualizar mi pedido
-                   ⟮3⟯  Ver mis pedidos
-                   ⟮4⟯  Eliminar Pedido
-                   ⟮5⟯  Salir
-
-                ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-                """);
-
-    }
-
-    public int opcionActualizarPedido() {
-        // Solo cuando sigue en pendiente
-        return v.validarEntero("""
-                ╭───────────────────────────╮
-                 ✦ Actualizar Pedido ✦
-                ╰───────────────────────────╯
-
-                   ⟮1⟯  Agregar celular
-                   ⟮2⟯  Eliminar celular
-                   ⟮3⟯  Cancelar pedido
-                   ⟮4⟯  Salir
-
-                ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-                """);
-
+                """, 0, 4);
     }
 
     public int opcionActualizarDatos() {
-
-        return v.validarEntero("""
+        return v.validarEnteroRango("""
                 ╭───────────────────────────╮
                   ✦ Actualizar Datos ✦
                 ╰───────────────────────────╯
@@ -85,10 +47,16 @@ public class MenuCliente {
                    ⟮3⟯  Email
                    ⟮4⟯  Identificación
                    ⟮5⟯  Teléfono
-                   ⟮6⟯  Salir
+                   ⟮0⟯  Salir
 
                 ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-                """);
+                """, 0, 5);
+    }
 
+    // gestionPedido() y opcionActualizarPedido() igual:
+    // mismo texto, pero con "⟮0⟯ Salir" y rango 0-4 y 0-3 respectivamente
+
+    public int gestionPedido() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

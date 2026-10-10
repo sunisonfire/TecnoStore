@@ -1,5 +1,9 @@
-package dao;
+package dao.implement;
 
+import model.Celular;
+import model.Celular.Gama;
+import model.Celular.SistemaOperativo;
+import model.Marca;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,15 +11,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import model.Celular;
-import model.Celular.Gama;
-import model.Celular.SistemaOperativo;
-import model.Marca;
 
 public class CelularDao {
 
-    private Connection connection;
-    private MarcaDao marcaDao;
+    private final Connection connection;
+    private final MarcaDao marcaDao;
 
     public CelularDao(Conexion conexion, MarcaDao marcaDao) {
     this.connection = conexion.conexion();
