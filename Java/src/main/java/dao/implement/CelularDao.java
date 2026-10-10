@@ -1,9 +1,5 @@
 package dao.implement;
 
-import model.Celular;
-import model.Celular.Gama;
-import model.Celular.SistemaOperativo;
-import model.Marca;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,19 +7,27 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import model.Celular;
+import model.Celular.Gama;
+import model.Celular.SistemaOperativo;
+import model.Marca;
 
+/**
+ * DAO de celular. Depende de MarcaDao para armar la marca de cada celular.
+ * Los métodos de stock con Connection se usan dentro de la transacción de VentaDao.
+ */
 public class CelularDao {
 
-    private final Connection connection;
-    private final MarcaDao marcaDao;
+    private final Conexion conexion = new Conexion();
+    private final MarcaDao marcaDao = new MarcaDao();   // debe tener obtenerPorId(int)
 
-    public CelularDao(Conexion conexion, MarcaDao marcaDao) {
-    this.connection = conexion.conexion();
-    this.marcaDao = marcaDao;
-}
+    private static final String SELECT_BASE = """
+            SELECT id_celular, id_marca, modelo, stock, sistema_operativo, gama, precio
+            FROM celular
+            """;
 
     // Convierte una fila del ResultSet en un Celular (se reutiliza en todos los SELECT)
-    private Celular construirCelular(ResultSet rs) throws SQLException {
+    private Celular mapear(ResultSet rs) throws SQLException {
         Marca marca = marcaDao.obtenerPorId(rs.getInt("id_marca"));
 
         return new Celular(
@@ -33,156 +37,170 @@ public class CelularDao {
                 rs.getDouble("precio"),
                 marca,
                 SistemaOperativo.valueOf(rs.getString("sistema_operativo")),
-                Gama.valueOf(rs.getString("gama"))
-        );
+                Gama.valueOf(rs.getString("gama")));
     }
 
-    // C - create
-    public boolean insertarCelular(Celular celular) {
-        String sql = "insert into celular (id_marca, modelo, stock, sistema_operativo, gama, precio) "
-                   + "values (?, ?, ?, ?, ?, ?)";
+    // ==================== C - create ====================
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    // Inserta y deja el id generado en el objeto
+    public boolean insertar(Celular celular) {
+        String sql = """
+                INSERT INTO celular (id_marca, modelo, stock, sistema_operativo, gama, precio)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
 
-            stmt.setInt(1, celular.getMarca().getIdMarca());
-            stmt.setString(2, celular.getModelo());
-            stmt.setInt(3, celular.getStock());
-            stmt.setString(4, celular.getSistemaOperativo().name());
-            stmt.setString(5, celular.getGama().name());
-            stmt.setDouble(6, celular.getPrecio());
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            if (stmt.executeUpdate() > 0) {
-                try (ResultSet keys = stmt.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        celular.setIdCelular(keys.getInt(1));
-                    }
-                }
-                System.out.println("Celular insertado correctamente");
-                return true;
+            ps.setInt(1, celular.getMarca().getIdMarca());
+            ps.setString(2, celular.getModelo());
+            ps.setInt(3, celular.getStock());
+            ps.setString(4, celular.getSistemaOperativo().name());
+            ps.setString(5, celular.getGama().name());
+            ps.setDouble(6, celular.getPrecio());
+
+            if (ps.executeUpdate() == 0) {
+                return false;
             }
 
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    celular.setIdCelular(keys.getInt(1));   // requiere setIdCelular en Celular
+                }
+            }
+            return true;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al insertar celular: " + e.getMessage());
         }
         return false;
     }
 
-    // R - read
-    public Celular obtenerPorId(int id) {
-        String sql = "select * from celular where id_celular = ?";
+    // ==================== R - read ====================
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+    public Celular obtenerPorId(int idCelular) {
+        String sql = SELECT_BASE + " WHERE id_celular = ?";
 
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, idCelular);
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return construirCelular(rs);
+                    return mapear(rs);
                 }
             }
-
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al buscar celular: " + e.getMessage());
         }
         return null;
     }
 
     public List<Celular> obtenerTodos() {
-        String sql = "select * from celular order by modelo";
-        List<Celular> celulares = new ArrayList<>();
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                celulares.add(construirCelular(rs));
-            }
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return celulares;
+        return obtenerLista(SELECT_BASE + " ORDER BY modelo", null);
     }
 
     public List<Celular> obtenerPorMarca(int idMarca) {
-        String sql = "select * from celular where id_marca = ? order by modelo";
+        return obtenerLista(SELECT_BASE + " WHERE id_marca = ? ORDER BY modelo", idMarca);
+    }
+
+    private List<Celular> obtenerLista(String sql, Object parametro) {
         List<Celular> celulares = new ArrayList<>();
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idMarca);
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            if (parametro != null) {
+                ps.setObject(1, parametro);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    celulares.add(construirCelular(rs));
+                    celulares.add(mapear(rs));
                 }
             }
-
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al listar celulares: " + e.getMessage());
         }
         return celulares;
     }
 
-    // U - update
-    public boolean actualizarCelular(Celular celular) {
-        String sql = "update celular set id_marca = ?, modelo = ?, stock = ?, "
-                   + "sistema_operativo = ?, gama = ?, precio = ? where id_celular = ?";
+    // ==================== U - update ====================
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+    public boolean actualizar(Celular celular) {
+        String sql = """
+                UPDATE celular SET id_marca = ?, modelo = ?, stock = ?,
+                                   sistema_operativo = ?, gama = ?, precio = ?
+                WHERE id_celular = ?
+                """;
 
-            stmt.setInt(1, celular.getMarca().getIdMarca());
-            stmt.setString(2, celular.getModelo());
-            stmt.setInt(3, celular.getStock());
-            stmt.setString(4, celular.getSistemaOperativo().name());
-            stmt.setString(5, celular.getGama().name());
-            stmt.setDouble(6, celular.getPrecio());
-            stmt.setInt(7, celular.getIdCelular());
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
-            if (stmt.executeUpdate() > 0) {
-                System.out.println("Celular actualizado correctamente: " + celular.getModelo());
-                return true;
-            }
-
+            ps.setInt(1, celular.getMarca().getIdMarca());
+            ps.setString(2, celular.getModelo());
+            ps.setInt(3, celular.getStock());
+            ps.setString(4, celular.getSistemaOperativo().name());
+            ps.setString(5, celular.getGama().name());
+            ps.setDouble(6, celular.getPrecio());
+            ps.setInt(7, celular.getIdCelular());
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al actualizar celular: " + e.getMessage());
         }
         return false;
     }
 
-    // Actualizar solo el stock (para ventas)
+    // Fija el stock a un valor exacto (por ejemplo, desde el menú del administrador)
     public boolean actualizarStock(int idCelular, int nuevoStock) {
-        String sql = "update celular set stock = ? where id_celular = ?";
+        String sql = "UPDATE celular SET stock = ? WHERE id_celular = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
-            stmt.setInt(1, nuevoStock);
-            stmt.setInt(2, idCelular);
-
-            if (stmt.executeUpdate() > 0) {
-                System.out.println("Stock actualizado correctamente");
-                return true;
-            }
-
+            ps.setInt(1, nuevoStock);
+            ps.setInt(2, idCelular);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al actualizar stock: " + e.getMessage());
         }
         return false;
     }
 
-    // D - delete
-    public boolean eliminarCelular(int id) {
-        String sql = "delete from celular where id_celular = ?";
+    // Para ventas: resta unidades solo si hay suficiente stock, en una sola operación.
+    // Devuelve false si no alcanza el stock (así no queda negativo).
+    public boolean descontarStock(Connection c, int idCelular, int cantidad) throws SQLException {
+        String sql = "UPDATE celular SET stock = stock - ? WHERE id_celular = ? AND stock >= ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, cantidad);
+            ps.setInt(2, idCelular);
+            ps.setInt(3, cantidad);
+            return ps.executeUpdate() > 0;
+        }
+    }
 
-            stmt.setInt(1, id);
+    // Para cancelar o eliminar una venta: devuelve las unidades al stock
+    public boolean reponerStock(Connection c, int idCelular, int cantidad) throws SQLException {
+        String sql = "UPDATE celular SET stock = stock + ? WHERE id_celular = ?";
 
-            if (stmt.executeUpdate() > 0) {
-                System.out.println("Celular eliminado correctamente");
-                return true;
-            }
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, cantidad);
+            ps.setInt(2, idCelular);
+            return ps.executeUpdate() > 0;
+        }
+    }
 
+    // ==================== D - delete ====================
+
+    public boolean eliminar(int idCelular) {
+        String sql = "DELETE FROM celular WHERE id_celular = ?";
+
+        try (Connection c = conexion.conexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, idCelular);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al eliminar celular: " + e.getMessage());
         }
         return false;
     }

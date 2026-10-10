@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexion {
+
     public Connection conexion() {
         Connection c = null;
         try {

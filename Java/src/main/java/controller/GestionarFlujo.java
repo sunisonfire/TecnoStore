@@ -109,7 +109,7 @@ public class GestionarFlujo {
     private void menuAdminCliente() {
         int opcion;
         do {
-            opcion = menuAdministrador.opcionGestionarCelular();
+            opcion = menuAdministrador.opcionGestionarCliente();
 
             switch (opcion) {
                 case 1 ->

@@ -36,6 +36,10 @@ public class Persona {
         return nombre;
     }
 
+    public void setIdPersona(int idPersona) {
+        this.idPersona = idPersona;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }

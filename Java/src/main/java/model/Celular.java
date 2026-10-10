@@ -39,6 +39,10 @@ public class Celular {
         this.gama = gama;
     }
 
+    public void setIdCelular(int idCelular) {
+        this.idCelular = idCelular;
+    }
+
     public int getIdCelular() {
         return idCelular;
     }

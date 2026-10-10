@@ -16,6 +16,10 @@ public class Marca {
         this.nombre = nombre;
     }
 
+    public void setIdMarca(int idMarca) {
+        this.idMarca = idMarca;
+    }
+
     public int getIdMarca() {
         return idMarca;
     }
