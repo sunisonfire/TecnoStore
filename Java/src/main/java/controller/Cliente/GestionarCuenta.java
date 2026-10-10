@@ -2,6 +2,7 @@ package controller.Cliente;
 
 import controller.Admin.GestionarCliente;
 import java.util.Scanner;
+import model.Cliente;
 import view.MenuCliente;
 import view.Validaciones.Confirmacion;
 import view.Validaciones.Correo;
@@ -21,7 +22,7 @@ public class GestionarCuenta {
     // Devuelve true si el login fue exitoso
     public boolean iniciarSesion() {
         String email = correo.validarCorreo("Ingrese su correo:");
-        clienteActual = gestionarCliente.login(email);
+        clienteActual = gestionarCliente.registrarse(email);
         if (clienteActual == null) {
             System.out.println("No existe una cuenta con ese correo.");
         }
@@ -47,7 +48,7 @@ public class GestionarCuenta {
     // Devuelve true si la cuenta fue eliminada
     public boolean eliminarCuenta() {
         if (confirmacion.validarConfirmacion("¿Seguro que desea eliminar su cuenta?")) {
-            gestionarCliente.eliminar(clienteActual.getId());
+            gestionarCliente.eliminarCliente(clienteActual.getIdCliente());
             System.out.println("Cuenta eliminada.");
             clienteActual = null;
             return true;
@@ -73,31 +74,39 @@ public class GestionarCuenta {
     public void actualizarEmail() {
         String nuevo = correo.validarCorreo("Nuevo correo:");
 
-        if (nuevo.equalsIgnoreCase(clienteActual.getEmail())) {
-            System.out.println("Ese ya es su correo actual.");
-            return;
-        }
-        if (gestionarCliente.existeEmail(nuevo)) {
+        if (gestionarCliente.existeEmailDeOtro(nuevo, clienteActual.getIdPersona())) {
             System.out.println("Ese correo ya está registrado.");
             return;
         }
 
+        String anterior = clienteActual.getEmail();
         clienteActual.setEmail(nuevo);
-        gestionarCliente.actualizar(clienteActual);
-        System.out.println("Correo actualizado.");
+
+        if (gestionarCliente.actualizar(clienteActual)) {
+            System.out.println("Correo actualizado.");
+        } else {
+            clienteActual.setEmail(anterior);   // si falló en la BD, no deja el dato a medias
+            System.out.println("No se pudo actualizar el correo.");
+        }
     }
 
     public void actualizarIdentificacion() {
         String nueva = pedirIdentificacion("Nueva identificación:");
 
-        if (gestionarCliente.existeIdentificacion(nueva)) {
+        if (gestionarCliente.existeIdentificacionDeOtro(nueva, clienteActual.getIdPersona())) {
             System.out.println("Esa identificación ya está registrada.");
             return;
         }
 
+        String anterior = clienteActual.getIdentificacion();
         clienteActual.setIdentificacion(nueva);
-        gestionarCliente.actualizar(clienteActual);
-        System.out.println("Identificación actualizada.");
+
+        if (gestionarCliente.actualizar(clienteActual)) {
+            System.out.println("Identificación actualizada.");
+        } else {
+            clienteActual.setIdentificacion(anterior);   // no deja el dato a medias
+            System.out.println("No se pudo actualizar la identificación.");
+        }
     }
 
     public void actualizarTelefono() {
@@ -108,7 +117,6 @@ public class GestionarCuenta {
     }
 
     // ---------- Auxiliares ----------
-
     // Texto no vacío y solo letras (con tildes, ñ y espacios)
     private String pedirTexto(String mensaje) {
         String t;

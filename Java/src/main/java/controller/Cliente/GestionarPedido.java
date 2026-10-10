@@ -1,6 +1,7 @@
 package controller.Cliente;
 
 import controller.Admin.GestionarVenta;
+import model.Cliente;
 
 public class GestionarPedido {
 
