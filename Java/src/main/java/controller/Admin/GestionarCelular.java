@@ -122,18 +122,38 @@ public class GestionarCelular {
     }
 
     public void mostrarCelulares(List<Celular> celulares) {
-        if (celulares.isEmpty()) {
-            System.out.println("No hay celulares registrados.");
-            return;
-        }
-        System.out.printf("%-4s | %-22s | %-12s | %-12s | %-6s | %-8s | %-6s%n",
-                "ID", "Modelo", "Marca", "Precio", "Stock", "SO", "Gama");
-        for (Celular c : celulares) {
-            System.out.printf("%-4d | %-22s | %-12s | $%-11.2f | %-6d | %-8s | %-6s%n",
-                    c.getIdCelular(), c.getModelo(), c.getMarca().getNombre(),
-                    c.getPrecio(), c.getStock(), c.getSistemaOperativo(), c.getGama());
-        }
+    if (celulares.isEmpty()) {
+        System.out.println("""
+
+                +------------------------------------------+
+                |       NO HAY CELULARES REGISTRADOS      |
+                +------------------------------------------+
+                """);
+        return;
     }
+
+    System.out.printf("""
+            +------+------------------------+--------------+--------------+--------+----------+--------+
+            | ID   | Modelo                 | Marca        | Precio       | Stock  | SO       | Gama   |
+            +------+------------------------+--------------+--------------+--------+----------+--------+
+            """);
+
+    for (Celular c : celulares) {
+        System.out.printf(
+                "| %-4d | %-22s | %-12s | $%-11.2f | %-6d | %-8s | %-6s |%n",
+                c.getIdCelular(),
+                c.getModelo(),
+                c.getMarca().getNombre(),
+                c.getPrecio(),
+                c.getStock(),
+                c.getSistemaOperativo(),
+                c.getGama()
+        );
+    }
+
+    System.out.println(
+            "+------+------------------------+--------------+--------------+--------+----------+--------+");
+}
 
     private final CelularDao celularDao = new CelularDao();
     private final MarcaDao marcaDao = new MarcaDao();

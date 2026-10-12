@@ -25,8 +25,8 @@ public class GestionarReporte {
     private final IVentaDao ventaDao = new VentaDao();
     private final ICelularDao celularDao = new CelularDao();
     private final MenuAdministrador menu = new MenuAdministrador();
-    private final GestionarCelular gestionarCelular= new GestionarCelular();
-    
+    private final GestionarCelular gestionarCelular = new GestionarCelular();
+
     // ---------- 1. Top 3 más vendidos ----------
     public void celularesMasVendidos() {
         Map<String, Integer> unidades = ventasValidas().stream()
@@ -40,11 +40,22 @@ public class GestionarReporte {
             return;
         }
 
-        System.out.println("\n--- TOP 3 CELULARES MÁS VENDIDOS ---");
+        System.out.println("""
+
+        +--------------------------------------------------+
+        |             TOP 3 CELULARES MAS VENDIDOS         |
+        +--------------------------------------------------+
+        |  CELULAR                         | UNIDADES      |
+        +--------------------------------------------------+""");
+
         unidades.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(3)
-                .forEach(e -> System.out.printf("%-32s %d unidades%n", e.getKey(), e.getValue()));
+                .forEach(e -> System.out.printf(
+                "|  %-31.31s | %-13d |%n",
+                e.getKey(), e.getValue()));
+
+        System.out.println("+--------------------------------------------------+");
     }
 
     // ---------- 2. Stock bajo ----------
@@ -95,24 +106,39 @@ public class GestionarReporte {
         DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
-            w.write("REPORTE DE VENTAS - TECNOSTORE");
+            w.write("+--------------------------------------------------+");
             w.newLine();
-            w.write("=".repeat(50));
+            w.write("|          REPORTE DE VENTAS - TECNOSTORE          |");
+            w.newLine();
+            w.write("+--------------------------------------------------+");
             w.newLine();
 
             for (Venta v : ventas) {
-                w.write(String.format("%nVenta #%d | %s | %s%n", v.getIdVenta(),
-                        v.getFechaHora().format(f), v.getEstado()));
-                w.write(String.format("Cliente: %s %s | Pago: %s | Entrega: %s%n",
-                        v.getCliente().getNombre(), v.getCliente().getApellido(),
-                        v.getMetodoPago(), v.getLugar()));
+                w.newLine();
+                w.write("+--------------------------------------------------+");
+                w.newLine();
+                w.write(String.format("| VENTA #%d | %-36s |%n",
+                        v.getIdVenta(),
+                        v.getFechaHora().format(f)));
+                w.write(String.format("| Estado: %-41s |%n", v.getEstado()));
+                w.write(String.format("| Cliente: %-40s |%n",
+                        v.getCliente().getNombre() + " " + v.getCliente().getApellido()));
+                w.write(String.format("| Pago: %-43s |%n", v.getMetodoPago()));
+                w.write(String.format("| Entrega: %-40s |%n", v.getLugar()));
+                w.write("+--------------------------------------------------+");
+                w.newLine();
 
                 for (DetalleVenta d : v.getDetalles()) {
-                    w.write(String.format("   %-22s x%-3d $%,.2f%n",
-                            d.getCelular().getModelo(), d.getCantidad(), d.getSubtotal()));
+                    w.write(String.format("| %-24.24s | x%-3d | $%-15.2f |%n",
+                            d.getCelular().getModelo(),
+                            d.getCantidad(),
+                            d.getSubtotal()));
                 }
-                w.write(String.format("   Total: $%,.2f%n", v.getTotal()));
-                w.write("-".repeat(50));
+
+                w.write("+--------------------------------------------------+");
+                w.newLine();
+                w.write(String.format("| TOTAL DE LA VENTA: $%-29.2f |%n", v.getTotal()));
+                w.write("+--------------------------------------------------+");
                 w.newLine();
             }
 
@@ -120,7 +146,13 @@ public class GestionarReporte {
                     .filter(v -> v.getEstado() != Venta.Estado.CANCELADO)
                     .mapToDouble(Venta::getTotal)
                     .sum();
-            w.write(String.format("%nTOTAL VENDIDO (sin canceladas): $%,.2f%n", totalVendido));
+            w.newLine();
+            w.write("+--------------------------------------------------+");
+            w.newLine();
+            w.write(String.format("| TOTAL VENDIDO: $%-34.2f |", totalVendido));
+            w.newLine();
+            w.write("+--------------------------------------------------+");
+            w.newLine();
 
             System.out.println("Reporte guardado en: " + ARCHIVO.toAbsolutePath());
         } catch (IOException e) {
