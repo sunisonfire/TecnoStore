@@ -18,7 +18,7 @@ import model.Venta;
 import view.MenuAdministrador;
 
 public class GestionarReporte {
-
+    // SE USA EN MAYUSCULA POR QUE ES FINAL
     private static final int STOCK_BAJO = 5;
     private static final Path ARCHIVO =Path.of("C:/Users/ASUS/Documents/JAVAA/TecnoStoreD/Reporte/reporte_ventas.txt");
     
@@ -26,8 +26,9 @@ public class GestionarReporte {
     private final ICelularDao celularDao = new CelularDao();
     private final MenuAdministrador menu = new MenuAdministrador();
     private final GestionarCelular gestionarCelular = new GestionarCelular();
-
-    // ---------- 1. Top 3 más vendidos ----------
+    
+    // STREAM API
+    // TOP CELULARES MAS VENDIDOS (3)
     public void celularesMasVendidos() {
         Map<String, Integer> unidades = ventasValidas().stream()
                 .flatMap(v -> v.getDetalles().stream())
@@ -58,7 +59,7 @@ public class GestionarReporte {
         System.out.println("+--------------------------------------------------+");
     }
 
-    // ---------- 2. Stock bajo ----------
+    // STOCK BAJO (<5)
     public void celularesStockBajo() {
         List<Celular> bajos = celularDao.obtenerTodos().stream()
                 .filter(c -> c.getStock() < STOCK_BAJO)
@@ -72,7 +73,7 @@ public class GestionarReporte {
         gestionarCelular.mostrarCelulares(bajos);
     }
 
-    // ---------- 3. Ventas totales ----------
+    // VENTAS TOTALES EXCLUYENDO LAS CANCELADAS
     public void ventasTotales() {
         List<Venta> ventas = ventasValidas();
 
@@ -94,7 +95,7 @@ public class GestionarReporte {
                 ventas.size(), unidades, total);
     }
 
-    // ---------- 4. Exportar a archivo ----------
+    // EL ARCHIVO .TXT
     public void exportarVentas() {
         List<Venta> ventas = ventaDao.obtenerTodos();
 
@@ -160,7 +161,7 @@ public class GestionarReporte {
         }
     }
 
-    // ---------- Auxiliar ----------
+    // COMPROBAR QUE UNA VENTA ES VALIDA (!= CANCELADA)
     private List<Venta> ventasValidas() {
         return ventaDao.obtenerTodos().stream()
                 .filter(v -> v.getEstado() != Venta.Estado.CANCELADO)

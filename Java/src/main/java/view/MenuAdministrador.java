@@ -126,7 +126,7 @@ public class MenuAdministrador {
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
     }
-    // dentro de MenuAdministrador (reutiliza el Scanner que ya agregaste)
+    
 
     public void mostrarClientes(List<Cliente> clientes) {
         if (clientes.isEmpty()) {
