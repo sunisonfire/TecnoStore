@@ -191,19 +191,18 @@ public class GestionarFlujo {
 
 // Pedidos del cliente
     private void menuClientePedido() {
-        int opcion;
-        do {
-            opcion = menuCliente.gestionPedido();
+    int opcion;
+    do {
+        opcion = menuCliente.gestionPedido();
 
-            switch (opcion) {
-                case 1 ->
-                    gestionarPedido.crearPedido(gestionarCuenta.getClienteActual());
-                case 3 ->
-                    gestionarPedido.verMisPedidos(gestionarCuenta.getClienteActual());
-                // 2 y 4: actualizar y eliminar, igual que los anteriores
-            }
-        } while (opcion != 0);
-    }
+        switch (opcion) {
+            case 1 -> gestionarPedido.crearPedido(gestionarCuenta.getClienteActual());
+            case 2 -> gestionarPedido.verMisPedidos(gestionarCuenta.getClienteActual());
+            case 3 -> gestionarPedido.cancelarPedido(gestionarCuenta.getClienteActual());
+            case 0 -> System.out.println("Volviendo...");
+        }
+    } while (opcion != 0);
+}
 
     // Actualizar datos
     private void menuActualizarDatos() {

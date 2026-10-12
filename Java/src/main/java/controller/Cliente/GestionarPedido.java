@@ -120,4 +120,43 @@ public class GestionarPedido {
         }
         carrito.add(new DetalleVenta(celular, cantidad, celular.getPrecio()));
     }
+    
+    public void verMisPedidos(Cliente cliente) {
+    List<Venta> pedidos = ventaDao.obtenerPorCliente(cliente.getIdCliente());
+    menuCliente.mostrarPedidos(pedidos);
+}
+
+// El cliente solo puede cancelar sus propios pedidos que sigan pendientes
+public void cancelarPedido(Cliente cliente) {
+    List<Venta> pendientes = ventaDao.obtenerPorCliente(cliente.getIdCliente()).stream()
+            .filter(v -> v.getEstado() == Venta.Estado.PENDIENTE)
+            .toList();
+
+    if (pendientes.isEmpty()) {
+        System.out.println("No tienes pedidos pendientes para cancelar.");
+        return;
+    }
+
+    menuCliente.mostrarPedidos(pendientes);
+    int id = entero.validarEnteroRango("ID del pedido a cancelar (0 para volver): ", 0, Integer.MAX_VALUE);
+    if (id == 0) {
+        return;
+    }
+
+    if (pendientes.stream().noneMatch(v -> v.getIdVenta() == id)) {
+        System.out.println("Ese pedido no está entre tus pedidos pendientes.");
+        return;
+    }
+
+    if (!confirmacion.validarConfirmacion("¿Cancelar el pedido #" + id + "? Las unidades volverán al stock.")) {
+        System.out.println("Operación cancelada.");
+        return;
+    }
+
+    if (ventaDao.actualizarEstado(id, Venta.Estado.CANCELADO)) {
+        System.out.println("Pedido cancelado.");
+    } else {
+        System.out.println("No se pudo cancelar el pedido.");
+    }
+}
 }

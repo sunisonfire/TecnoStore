@@ -1,5 +1,10 @@
 package view;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import model.Celular;
+import model.DetalleVenta;
+import model.Venta;
 import view.Validaciones.EnteroRango;
 
 public class MenuCliente {
@@ -56,8 +61,37 @@ public class MenuCliente {
     // gestionPedido() y opcionActualizarPedido() igual:
     // mismo texto, pero con "⟮0⟯ Salir" y rango 0-4 y 0-3 respectivamente
     public int gestionPedido() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    return v.validarEnteroRango("""
+            ╭──────────────────────────────╮
+                   ✦ Mis Pedidos ✦
+            ╰──────────────────────────────╯
+
+               ⟮1⟯  Hacer un pedido
+               ⟮2⟯  Ver mis pedidos
+               ⟮3⟯  Cancelar un pedido
+               ⟮0⟯  Volver
+
+            ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+            """, 0, 3);
+}
+
+public void mostrarPedidos(List<Venta> pedidos) {
+    if (pedidos.isEmpty()) {
+        System.out.println("Aún no tienes pedidos.");
+        return;
     }
+    DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    for (Venta p : pedidos) {
+        System.out.printf("%nPedido #%d | %s | %s | %s | %s%n",
+                p.getIdVenta(), p.getFechaHora().format(f),
+                p.getEstado(), p.getMetodoPago(), p.getLugar());
+        for (DetalleVenta d : p.getDetalles()) {
+            System.out.printf("   %-22s x%-3d $%-11.2f%n",
+                    d.getCelular().getModelo(), d.getCantidad(), d.getSubtotal());
+        }
+        System.out.printf("   Total: $%.2f%n", p.getTotal());
+    }
+}
 
     public int opcionSeguirComprando() {
         return v.validarEnteroRango("""
