@@ -1,0 +1,37 @@
+REPORTE DE VENTAS - TECNOSTORE
+==================================================
+
+Venta #6 | 2026-10-11 20:56 | ENVIADO
+Cliente: Sunghoon Park | Pago: PSE | Entrega: LOCAL
+   Galaxy A15             x1   $850.000,00
+   Total: $850.000,00
+--------------------------------------------------
+
+Venta #4 | 2026-10-05 18:20 | CANCELADO
+Cliente: Valentina Pérez | Pago: TRANSFERENCIA | Entrega: DOMICILIO
+   iPhone 13              x1   $2.900.000,00
+   Galaxy A15             x1   $850.000,00
+   Total: $3.750.000,00
+--------------------------------------------------
+
+Venta #3 | 2026-10-02 09:05 | ENVIADO
+Cliente: Andrés Rojas | Pago: NEQUI | Entrega: DOMICILIO
+   Redmi Note 13          x2   $1.800.000,00
+   Moto G54               x1   $780.000,00
+   Total: $2.580.000,00
+--------------------------------------------------
+
+Venta #2 | 2026-09-30 15:40 | PENDIENTE
+Cliente: Laura Martínez | Pago: TARJETA | Entrega: LOCAL
+   iPhone 15              x1   $4.800.000,00
+   Total: $4.800.000,00
+--------------------------------------------------
+
+Venta #1 | 2026-09-28 10:15 | ENVIADO
+Cliente: Carlos Gómez | Pago: PSE | Entrega: DOMICILIO
+   Galaxy S24             x1   $3.500.000,00
+   Redmi 12C              x2   $1.040.000,00
+   Total: $4.540.000,00
+--------------------------------------------------
+
+TOTAL VENDIDO (sin canceladas): $12.770.000,00
