@@ -55,8 +55,59 @@ public class MenuCliente {
 
     // gestionPedido() y opcionActualizarPedido() igual:
     // mismo texto, pero con "⟮0⟯ Salir" y rango 0-4 y 0-3 respectivamente
-
     public int gestionPedido() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public int opcionSeguirComprando() {
+        return v.validarEnteroRango("""
+            ╭──────────────────────────────╮
+                   ✦ Tu carrito ✦
+            ╰──────────────────────────────╯
+
+               ⟮1⟯  Seguir agregando
+               ⟮2⟯  Continuar con el pago
+               ⟮0⟯  Cancelar compra
+
+            """, 0, 2);
+    }
+
+    public Venta.MetodoPago pedirMetodoPago() {
+        int op = v.validarEnteroRango("""
+            Método de pago:
+              [1] PSE
+              [2] TARJETA
+              [3] NEQUI
+              [4] TRANSFERENCIA
+            """, 1, 4);
+        return Venta.MetodoPago.values()[op - 1];
+    }
+
+    public Venta.Lugar pedirLugar() {
+        int op = v.validarEnteroRango("""
+            ¿Cómo recibes tu compra?
+              [1] Recoger en el local
+              [2] Domicilio
+            """, 1, 2);
+        return op == 1 ? Venta.Lugar.LOCAL : Venta.Lugar.DOMICILIO;
+    }
+
+    public void mostrarCatalogo(List<Celular> celulares) {
+        System.out.printf("%-4s | %-22s | %-12s | %-6s%n", "ID", "Modelo", "Precio", "Stock");
+        for (Celular c : celulares) {
+            System.out.printf("%-4d | %-22s | $%-11.2f | %-6d%n",
+                    c.getIdCelular(), c.getModelo(), c.getPrecio(), c.getStock());
+        }
+    }
+
+    public void mostrarResumen(Venta venta) {
+        System.out.println("\n--- Resumen de tu compra ---");
+        for (DetalleVenta d : venta.getDetalles()) {
+            System.out.printf("%-22s x%-3d $%-11.2f = $%-11.2f%n",
+                    d.getCelular().getModelo(), d.getCantidad(),
+                    d.getPrecioUnitario(), d.getSubtotal());
+        }
+        System.out.printf("Pago: %s | Entrega: %s%n", venta.getMetodoPago(), venta.getLugar());
+        System.out.printf("TOTAL: $%.2f%n", venta.getTotal());
     }
 }

@@ -8,6 +8,7 @@ import controller.Admin.GestionarCliente;
 import controller.Admin.GestionarVenta;
 import controller.Cliente.GestionarCuenta;
 import controller.Cliente.GestionarPedido;
+import controller.Admin.GestionarAdmin;
 
 public class GestionarFlujo {
 
@@ -19,6 +20,7 @@ public class GestionarFlujo {
     MenuAdministrador menuAdministrador = new MenuAdministrador();
     MenuCliente menuCliente = new MenuCliente();
     MenuIngreso menuIngreso = new MenuIngreso();
+    GestionarAdmin gestionarAdmin = new GestionarAdmin();
 
     //Escoger tipo de persona (Admin o Cliente)
     public void inicio() {
@@ -27,8 +29,13 @@ public class GestionarFlujo {
             opcion = menuIngreso.escogerOpcionPersona();
 
             switch (opcion) {
-                case 1 ->
-                    menuAdminAccion();
+                case 1 -> {
+                    if (gestionarAdmin.iniciarSesion()) {
+                        menuAdminAccion();   // solo entra si el login fue exitoso
+                        gestionarAdmin.cerrarSesion();
+                    }
+                }
+
                 case 2 ->
                     menuClienteLogin();
                 case 0 ->
@@ -75,11 +82,11 @@ public class GestionarFlujo {
                 case 4 ->
                     gestionarCelular.eliminarCelular();
                 case 0 ->
-                    menuAdminAccion();
+                    System.out.println("Volviendo...");
             }
         } while (opcion != 0);
     }
-    
+
     //Actualizar celular
     private void menuActualizarCelular() {
         int opcion;
@@ -107,20 +114,16 @@ public class GestionarFlujo {
 
     //Gestionar Cliente
     private void menuAdminCliente() {
-        int opcion;
-        do {
-            opcion = menuAdministrador.opcionGestionarCliente();
+    int opcion;
+    do {
+        opcion = menuAdministrador.opcionGestionarCliente();
 
-            switch (opcion) {
-                case 1 ->
-                    gestionarCliente.listarCliente();
-                case 2 ->
-                    gestionarCliente.eliminarCliente();
-                case 0 ->
-                    menuAdminAccion();
-            }
-        } while (opcion != 0);
-    }
+        switch (opcion) {
+            case 1 -> gestionarCliente.listarCliente();
+            case 0 -> System.out.println("Volviendo...");
+        }
+    } while (opcion != 0);
+}
 
     // Gestionar Venta
     private void menuAdminVenta() {
@@ -136,7 +139,7 @@ public class GestionarFlujo {
                 case 3 ->
                     gestionarVenta.eliminarVenta();
                 case 0 ->
-                    menuAdminAccion();
+                    System.out.println("Volviendo...");
             }
         } while (opcion != 0);
     }

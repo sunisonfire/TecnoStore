@@ -22,7 +22,7 @@ public class GestionarCuenta {
     // Devuelve true si el login fue exitoso
     public boolean iniciarSesion() {
         String email = correo.validarCorreo("Ingrese su correo:");
-        clienteActual = gestionarCliente.registrarse(email);
+        clienteActual = gestionarCliente.login(email);
         if (clienteActual == null) {
             System.out.println("No existe una cuenta con ese correo.");
         }
@@ -47,15 +47,18 @@ public class GestionarCuenta {
 
     // Devuelve true si la cuenta fue eliminada
     public boolean eliminarCuenta() {
-        if (confirmacion.validarConfirmacion("¿Seguro que desea eliminar su cuenta?")) {
-            gestionarCliente.eliminarCliente(clienteActual.getIdCliente());
+    if (confirmacion.validarConfirmacion("¿Seguro que desea eliminar su cuenta?")) {
+        if (gestionarCliente.eliminarCliente(clienteActual.getIdCliente())) {
             System.out.println("Cuenta eliminada.");
             clienteActual = null;
             return true;
         }
-        System.out.println("Operación cancelada.");
+        System.out.println("No se pudo eliminar la cuenta.");
         return false;
     }
+    System.out.println("Operación cancelada.");
+    return false;
+}
 
     public void actualizarNombre() {
         String nuevo = pedirTexto("Nuevo nombre:");

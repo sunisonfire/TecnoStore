@@ -17,7 +17,7 @@ public class MenuIngreso {
                    [ 0 ]  Salir
 
                 ︶︶︶︶︶︶︶︶︶︶︶︶︶︶︶
-                """,0,3);
+                """,0,2);
 
     }
 

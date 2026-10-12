@@ -9,7 +9,6 @@ public class Celular {
     private SistemaOperativo sistemaOperativo;
     private Gama gama;
 
-
     public enum SistemaOperativo {
         IOS, ANDROID
     }
@@ -95,28 +94,21 @@ public class Celular {
         this.gama = gama;
     }
 
-        @Override
+    @Override
     public String toString() {
         return """
-           +-------------------+----------------------+
-           | Campo             | Valor                |
-           +-------------------+----------------------+
-           | ID                | %-20d |
-           | Username          | %-20s |
-           | Contraseña        | %-20s |
-           | Precio            | $%-19.2f |
-           | Stock             | %-20d |
-           | Sistema operativo | %-20s |
-           | Gama              | %-20s |
-           +-------------------+----------------------+"""
-                .formatted(
-                        idCelular,
-                        modelo,
-                        marca,
-                        precio,
-                        stock,
-                        sistemaOperativo,
-                        gama);
+       +-------------------+----------------------+
+       | Campo             | Valor                |
+       +-------------------+----------------------+
+       | ID                | %-20d |
+       | Modelo            | %-20s |
+       | Marca             | %-20s |
+       | Precio            | $%-19.2f |
+       | Stock             | %-20d |
+       | Sistema operativo | %-20s |
+       | Gama              | %-20s |
+       +-------------------+----------------------+"""
+                .formatted(idCelular, modelo, marca.getNombre(), precio, stock, sistemaOperativo, gama);
     }
 
 }

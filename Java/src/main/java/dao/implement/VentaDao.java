@@ -19,6 +19,7 @@ import model.Venta;
  */
 public class VentaDao implements IVentaDao {
 
+    private final CelularDao celularDao = new CelularDao();
     private final Conexion conexion = new Conexion();
     private final DetalleVentaDao detalleVentaDao = new DetalleVentaDao();
 
@@ -70,7 +71,6 @@ public class VentaDao implements IVentaDao {
     }
 
     // ==================== C - create ====================
-
     // Inserta la venta y todos sus detalles. Deja los ids generados en los objetos.
     @Override
     public boolean insertar(Venta v) {
@@ -97,6 +97,10 @@ public class VentaDao implements IVentaDao {
                 }
 
                 for (DetalleVenta d : v.getDetalles()) {
+                    // descuenta solo si alcanza el stock; si no, lanza error y se hace rollback de todo
+                    if (!celularDao.descontarStock(c, d.getCelular().getIdCelular(), d.getCantidad())) {
+                        throw new SQLException("Stock insuficiente para " + d.getCelular().getModelo());
+                    }
                     detalleVentaDao.insertar(c, d, v.getIdVenta());
                 }
 
@@ -113,13 +117,11 @@ public class VentaDao implements IVentaDao {
     }
 
     // ==================== R - read ====================
-
     @Override
     public Venta obtenerPorId(int idVenta) {
         String sql = SELECT_BASE + " WHERE v.id_venta = ?";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, idVenta);
             try (ResultSet rs = ps.executeQuery()) {
@@ -147,8 +149,7 @@ public class VentaDao implements IVentaDao {
     private List<Venta> obtenerLista(String sql, Object parametro) {
         List<Venta> ventas = new ArrayList<>();
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             if (parametro != null) {
                 ps.setObject(1, parametro);
@@ -165,7 +166,6 @@ public class VentaDao implements IVentaDao {
     }
 
     // ==================== U - update ====================
-
     // Actualiza la venta y reemplaza sus detalles por los que tiene el objeto
     @Override
     public boolean actualizar(Venta v) {
@@ -203,15 +203,36 @@ public class VentaDao implements IVentaDao {
 
     // Solo cambia el estado (ENVIADO, CANCELADO...)
     @Override
-    public boolean actualizarEstado(int idVenta, Venta.Estado estado) {
+    public boolean actualizarEstado(int idVenta, Venta.Estado nuevo) {
+        Venta venta = obtenerPorId(idVenta);
+        if (venta == null) {
+            return false;
+        }
+
         String sql = "UPDATE venta SET estado = ? WHERE id_venta = ?";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion()) {
+            c.setAutoCommit(false);
+            try {
+                try (PreparedStatement ps = c.prepareStatement(sql)) {
+                    ps.setString(1, nuevo.name());
+                    ps.setInt(2, idVenta);
+                    ps.executeUpdate();
+                }
 
-            ps.setString(1, estado.name());
-            ps.setInt(2, idVenta);
-            return ps.executeUpdate() > 0;
+                // Al cancelar, las unidades vuelven al stock
+                if (nuevo == Venta.Estado.CANCELADO && venta.getEstado() != Venta.Estado.CANCELADO) {
+                    for (DetalleVenta d : venta.getDetalles()) {
+                        celularDao.reponerStock(c, d.getCelular().getIdCelular(), d.getCantidad());
+                    }
+                }
+
+                c.commit();
+                return true;
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             System.err.println("Error al actualizar estado: " + e.getMessage());
         }
@@ -219,32 +240,43 @@ public class VentaDao implements IVentaDao {
     }
 
     // ==================== D - delete ====================
-
     // Borra los detalles y luego la venta
     @Override
-    public boolean eliminar(int idVenta) {
-        String sql = "DELETE FROM venta WHERE id_venta = ?";
-
-        try (Connection c = conexion.conexion()) {
-            c.setAutoCommit(false);
-            try {
-                detalleVentaDao.eliminarPorVenta(c, idVenta);
-
-                boolean eliminada;
-                try (PreparedStatement ps = c.prepareStatement(sql)) {
-                    ps.setInt(1, idVenta);
-                    eliminada = ps.executeUpdate() > 0;
-                }
-
-                c.commit();
-                return eliminada;
-            } catch (SQLException e) {
-                c.rollback();
-                throw e;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar venta: " + e.getMessage());
-        }
+public boolean eliminar(int idVenta) {
+    Venta venta = obtenerPorId(idVenta);
+    if (venta == null) {
         return false;
     }
+
+    String sql = "DELETE FROM venta WHERE id_venta = ?";
+
+    try (Connection c = conexion.conexion()) {
+        c.setAutoCommit(false);
+        try {
+            // Si no estaba cancelada, el stock sigue descontado: se devuelve
+            if (venta.getEstado() != Venta.Estado.CANCELADO) {
+                for (DetalleVenta d : venta.getDetalles()) {
+                    celularDao.reponerStock(c, d.getCelular().getIdCelular(), d.getCantidad());
+                }
+            }
+
+            detalleVentaDao.eliminarPorVenta(c, idVenta);
+
+            boolean eliminada;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, idVenta);
+                eliminada = ps.executeUpdate() > 0;
+            }
+
+            c.commit();
+            return eliminada;
+        } catch (SQLException e) {
+            c.rollback();
+            throw e;
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al eliminar venta: " + e.getMessage());
+    }
+    return false;
+}
 }
