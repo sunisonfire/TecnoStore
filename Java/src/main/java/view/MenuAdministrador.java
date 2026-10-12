@@ -15,15 +15,15 @@ public class MenuAdministrador {
     public int escogerAccion() {
 
         return v.validarEnteroRango("""
-                ╔════════════════════════════════╗
-                ║   ELIJA QUÉ GESTIONAR    ║
-                ╠════════════════════════════════╣
-                ║  [1] Gestionar Celulares ║
-                ║  [2] Gestionar Clientes  ║
-                ║  [3] Gestionar Ventas    ║
-                ║  [4] Reportes y Análisis ║
-                ║  [0] Salir               ║
-                ╚════════════════════════════════╝
+                +--------------------------+
+                |     ELIGE QUE GESTIONAR  |
+                +--------------------------+
+                | [1] Gestionar Celulares  |
+                | [2] Gestionar Clientes   |
+                | [3] Gestionar Ventas     |
+                | [4] Reportes y Analisis  |
+                | [0] Salir                |
+                +--------------------------+
 
         """, 0, 4);
 
@@ -32,15 +32,15 @@ public class MenuAdministrador {
     public int opcionGestionarCelular() {
 
         return v.validarEnteroRango("""
-                               ╔════════════════════════════════╗
-                               ║   ELIJA QUÉ GESTIONAR    ║
-                               ╠════════════════════════════════╣
-                               ║  [1] Agregar             ║
-                               ║  [2] Listar              ║
-                               ║  [3] Actualizar          ║
-                               ║  [4] Eliminar            ║
-                               ║  [0] Salir               ║
-                               ╚════════════════════════════════╝
+                               +--------------------------------+
+                               |      GESTIONAR CELULARES       |
+                               +--------------------------------+
+                               |  [1] Agregar                   |
+                               |  [2] Listar                    |
+                               |  [3] Actualizar                |
+                               |  [4] Eliminar                  |
+                               |  [0] Salir                     |
+                               +--------------------------------+
 
                                """, 0, 4);
 
@@ -49,12 +49,12 @@ public class MenuAdministrador {
     public int opcionGestionarCliente() {
 
         return v.validarEnteroRango("""
-                                 ╔════════════════════════════════╗
-                                 ║    GESTIONAR CLIENTE     ║
-                                 ╠════════════════════════════════╣
-                                 ║  [1] Listar              ║
-                                 ║  [0] Salir               ║
-                                 ╚════════════════════════════════╝
+                                 +--------------------------------+
+                                 |       GESTIONAR CLIENTE        |
+                                 +--------------------------------+
+                                 |  [1] Listar                    |
+                                 |  [0] Salir                     |
+                                 +--------------------------------+
                                """, 0, 1);
 
     }
@@ -62,14 +62,14 @@ public class MenuAdministrador {
     public int opcionGestionarVenta() {
 
         return v.validarEnteroRango("""
-                                     ╔════════════════════════════════╗
-                                     ║      GESTIONAR VENTA     ║
-                                     ╠════════════════════════════════╣
-                                     ║  [1] Actualizar Estado   ║
-                                     ║  [2] Lista               ║
-                                     ║  [3] Eliminar            ║
-                                     ║  [0] Salir               ║
-                                     ╚════════════════════════════════╝
+                                     +--------------------------------+
+                                     |        GESTIONAR VENTA         |
+                                     +--------------------------------+
+                                     |  [1] Actualizar Estado         |
+                                     |  [2] Lista                     |
+                                     |  [3] Eliminar                  |
+                                     |  [0] Salir                     |
+                                     +--------------------------------+
 
                                """, 0, 3);
 
@@ -78,32 +78,32 @@ public class MenuAdministrador {
     public int opcionActualizarCelular() {
 
         return v.validarEnteroRango("""
-            ╔════════════════════════════╗
-            ║ ACTUALIZAR CELULAR    ║
-            ╠════════════════════════════╣
-            ║  [1] Modelo           ║
-            ║  [2] Marca            ║
-            ║  [3] Stock            ║
-            ║  [4] Sistema Operativo║
-            ║  [5] Gama             ║
-            ║  [6] Precio           ║
-            ║  [0] Salir            ║
-            ╚════════════════════════════╝
+            +------------------------------+
+            |      ACTUALIZAR CELULAR      |
+            +------------------------------+
+            |  [1] Modelo                  |
+            |  [2] Marca                   |
+            |  [3] Stock                   |
+            |  [4] Sistema Operativo       |
+            |  [5] Gama                    |
+            |  [6] Precio                  |
+            |  [0] Salir                   |
+            +------------------------------+
             """, 0, 6);
 
     }
 
     public int opcionReportes() {
     return v.validarEnteroRango("""
-            ╔════════════════════════════════╗
-            ║   REPORTES Y ANÁLISIS    ║
-            ╠════════════════════════════════╣
-            ║  [1] Más vendidos        ║
-            ║  [2] Stock bajo          ║
-            ║  [3] Ventas totales      ║
-            ║  [4] Exportar a archivo  ║
-            ║  [0] Volver              ║
-            ╚════════════════════════════════╝
+            +--------------------------------+
+            |      REPORTES Y ANALISIS       |
+            +--------------------------------+
+            |  [1] Mas vendidos              |
+            |  [2] Stock bajo                |
+            |  [3] Ventas totales            |
+            |  [4] Exportar a archivo        |
+            |  [0] Volver                    |
+            +--------------------------------+
             """, 0, 4);
 }
 
