@@ -20,8 +20,8 @@ import view.MenuAdministrador;
 public class GestionarReporte {
 
     private static final int STOCK_BAJO = 5;
-    private static final Path ARCHIVO = Path.of("reporte_ventas.txt");
-
+    private static final Path ARCHIVO =Path.of("C:/Users/ASUS/Documents/JAVAA/TecnoStoreD/Reporte/reporte_ventas.txt");
+    
     private final IVentaDao ventaDao = new VentaDao();
     private final ICelularDao celularDao = new CelularDao();
     private final MenuAdministrador menu = new MenuAdministrador();
