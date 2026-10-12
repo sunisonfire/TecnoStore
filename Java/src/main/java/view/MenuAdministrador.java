@@ -93,9 +93,19 @@ public class MenuAdministrador {
 
     }
 
-    public void reportes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public int opcionReportes() {
+    return v.validarEnteroRango("""
+            ╔════════════════════════════════╗
+            ║   REPORTES Y ANÁLISIS    ║
+            ╠════════════════════════════════╣
+            ║  [1] Más vendidos        ║
+            ║  [2] Stock bajo          ║
+            ║  [3] Ventas totales      ║
+            ║  [4] Exportar a archivo  ║
+            ║  [0] Volver              ║
+            ╚════════════════════════════════╝
+            """, 0, 4);
+}
 
     public String pedirUsername() {
         System.out.print("Usuario: ");

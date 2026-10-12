@@ -9,9 +9,10 @@ import controller.Admin.GestionarVenta;
 import controller.Cliente.GestionarCuenta;
 import controller.Cliente.GestionarPedido;
 import controller.Admin.GestionarAdmin;
+import controller.Admin.GestionarReporte;
 
 public class GestionarFlujo {
-
+    GestionarReporte gestionarReporte = new GestionarReporte();
     GestionarCuenta gestionarCuenta = new GestionarCuenta();
     GestionarPedido gestionarPedido = new GestionarPedido();
     GestionarVenta gestionarVenta = new GestionarVenta();
@@ -59,7 +60,7 @@ public class GestionarFlujo {
                 case 3 ->
                     menuAdminVenta();
                 case 4 ->
-                    menuAdministrador.reportes();
+                    menuAdminReporte();
                 case 0 ->
                     System.out.println("¡Hasta pronto!");
             }
@@ -226,5 +227,19 @@ public class GestionarFlujo {
             }
         } while (opcion != 0);
     }
+    // Reportes
+private void menuAdminReporte() {
+    int opcion;
+    do {
+        opcion = menuAdministrador.opcionReportes();
 
+        switch (opcion) {
+            case 1 -> gestionarReporte.celularesMasVendidos();
+            case 2 -> gestionarReporte.celularesStockBajo();
+            case 3 -> gestionarReporte.ventasTotales();
+            case 4 -> gestionarReporte.exportarVentas();
+            case 0 -> System.out.println("Volviendo...");
+        }
+    } while (opcion != 0);
+}
 }
