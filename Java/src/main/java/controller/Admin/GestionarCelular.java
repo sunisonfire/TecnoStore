@@ -2,6 +2,7 @@ package controller.Admin;
 
 import dao.implement.CelularDao;
 import dao.implement.MarcaDao;
+import factory.CelularFactory;
 import java.util.List;
 import java.util.Scanner;
 import model.Celular;
@@ -157,7 +158,6 @@ public class GestionarCelular {
 
     private final CelularDao celularDao = new CelularDao();
     private final MarcaDao marcaDao = new MarcaDao();
-    private final MenuAdministrador menu = new MenuAdministrador();
 
     // ---------- Crear ----------
     public void agregarCelular() {
@@ -169,7 +169,7 @@ public class GestionarCelular {
         var so = pedirSistemaOperativo();
         var gama = pedirGama();
 
-        Celular celular = new Celular(stock, modelo, precio, marca, so, gama);
+        Celular celular = CelularFactory.crear(stock, modelo, precio, marca, so, gama);
 
         if (celularDao.insertar(celular)) {
             System.out.println("Celular agregado con ID " + celular.getIdCelular() + ".");

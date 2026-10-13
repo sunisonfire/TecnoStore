@@ -1,6 +1,7 @@
 package dao.implement;
 
 import dao.Interfaces.ICelularDao;
+import factory.CelularFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,17 +30,17 @@ public class CelularDao implements ICelularDao {
 
     // Convierte una fila del ResultSet en un Celular (se reutiliza en todos los SELECT)
     private Celular mapear(ResultSet rs) throws SQLException {
-        Marca marca = marcaDao.obtenerPorId(rs.getInt("id_marca"));
+    Marca marca = marcaDao.obtenerPorId(rs.getInt("id_marca"));
 
-        return new Celular(
-                rs.getInt("id_celular"),
-                rs.getInt("stock"),
-                rs.getString("modelo"),
-                rs.getDouble("precio"),
-                marca,
-                SistemaOperativo.valueOf(rs.getString("sistema_operativo")),
-                Gama.valueOf(rs.getString("gama")));
-    }
+    return CelularFactory.desdeBD(
+            rs.getInt("id_celular"),
+            rs.getInt("stock"),
+            rs.getString("modelo"),
+            rs.getDouble("precio"),
+            marca,
+            SistemaOperativo.valueOf(rs.getString("sistema_operativo")),
+            Gama.valueOf(rs.getString("gama")));
+}
 
     // ==================== C - create ====================
 

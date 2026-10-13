@@ -13,6 +13,11 @@ import model.Venta;
 import view.MenuCliente;
 import view.Validaciones.Confirmacion;
 import view.Validaciones.EnteroRango;
+import strategy.DescuentoClienteFrecuente;
+import strategy.DescuentoPorMonto;
+import strategy.GestionarDescuento;
+import strategy.SinDescuento;
+import strategy.TipoDescuento;
 
 public class GestionarPedido {
 
@@ -61,6 +66,9 @@ public class GestionarPedido {
 
         Venta venta = new Venta(cliente, LocalDateTime.now(), metodo, Venta.Estado.PENDIENTE, lugar);
         carrito.forEach(venta::agregarDetalle);
+
+        TipoDescuento tipo = elegirDescuento(cliente, venta.getSubtotal());
+        venta.setTotal(new GestionarDescuento(tipo).calcularTotal(venta.getSubtotal()));
 
         // 3. Resumen y confirmación
         menuCliente.mostrarResumen(venta);
@@ -120,43 +128,56 @@ public class GestionarPedido {
         }
         carrito.add(new DetalleVenta(celular, cantidad, celular.getPrecio()));
     }
-    
+
     public void verMisPedidos(Cliente cliente) {
-    List<Venta> pedidos = ventaDao.obtenerPorCliente(cliente.getIdCliente());
-    menuCliente.mostrarPedidos(pedidos);
-}
+        List<Venta> pedidos = ventaDao.obtenerPorCliente(cliente.getIdCliente());
+        menuCliente.mostrarPedidos(pedidos);
+    }
 
 // El cliente solo puede cancelar sus propios pedidos que sigan pendientes
-public void cancelarPedido(Cliente cliente) {
-    List<Venta> pendientes = ventaDao.obtenerPorCliente(cliente.getIdCliente()).stream()
-            .filter(v -> v.getEstado() == Venta.Estado.PENDIENTE)
-            .toList();
+    public void cancelarPedido(Cliente cliente) {
+        List<Venta> pendientes = ventaDao.obtenerPorCliente(cliente.getIdCliente()).stream()
+                .filter(v -> v.getEstado() == Venta.Estado.PENDIENTE)
+                .toList();
 
-    if (pendientes.isEmpty()) {
-        System.out.println("No tienes pedidos pendientes para cancelar.");
-        return;
+        if (pendientes.isEmpty()) {
+            System.out.println("No tienes pedidos pendientes para cancelar.");
+            return;
+        }
+
+        menuCliente.mostrarPedidos(pendientes);
+        int id = entero.validarEnteroRango("ID del pedido a cancelar (0 para volver): ", 0, Integer.MAX_VALUE);
+        if (id == 0) {
+            return;
+        }
+
+        if (pendientes.stream().noneMatch(v -> v.getIdVenta() == id)) {
+            System.out.println("Ese pedido no está entre tus pedidos pendientes.");
+            return;
+        }
+
+        if (!confirmacion.validarConfirmacion("¿Cancelar el pedido #" + id + "? Las unidades volverán al stock.")) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
+
+        if (ventaDao.actualizarEstado(id, Venta.Estado.CANCELADO)) {
+            System.out.println("Pedido cancelado.");
+        } else {
+            System.out.println("No se pudo cancelar el pedido.");
+        }
     }
 
-    menuCliente.mostrarPedidos(pendientes);
-    int id = entero.validarEnteroRango("ID del pedido a cancelar (0 para volver): ", 0, Integer.MAX_VALUE);
-    if (id == 0) {
-        return;
-    }
+    // El controller decide la estrategia; GestionarDescuento solo la ejecuta
+    private TipoDescuento elegirDescuento(Cliente cliente, double subtotal) {
+        boolean esFrecuente = ventaDao.obtenerPorCliente(cliente.getIdCliente()).size() >= 3;
 
-    if (pendientes.stream().noneMatch(v -> v.getIdVenta() == id)) {
-        System.out.println("Ese pedido no está entre tus pedidos pendientes.");
-        return;
+        if (esFrecuente) {
+            return new DescuentoClienteFrecuente();
+        }
+        if (subtotal > 5_000_000) {
+            return new DescuentoPorMonto();
+        }
+        return new SinDescuento();
     }
-
-    if (!confirmacion.validarConfirmacion("¿Cancelar el pedido #" + id + "? Las unidades volverán al stock.")) {
-        System.out.println("Operación cancelada.");
-        return;
-    }
-
-    if (ventaDao.actualizarEstado(id, Venta.Estado.CANCELADO)) {
-        System.out.println("Pedido cancelado.");
-    } else {
-        System.out.println("No se pudo cancelar el pedido.");
-    }
-}
 }
