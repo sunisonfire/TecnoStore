@@ -1,5 +1,6 @@
 package controller.Cliente;
 
+import controller.Admin.GestionarIVA;
 import dao.Interfaces.IVentaDao;
 import dao.implement.CelularDao;
 import dao.implement.VentaDao;
@@ -68,7 +69,8 @@ public class GestionarPedido {
         carrito.forEach(venta::agregarDetalle);
 
         TipoDescuento tipo = elegirDescuento(cliente, venta.getSubtotal());
-        venta.setTotal(new GestionarDescuento(tipo).calcularTotal(venta.getSubtotal()));
+        double baseConDescuento = new GestionarDescuento(tipo).aplicar(venta.getSubtotal());
+        venta.setTotal(GestionarIVA.conIva(baseConDescuento));
 
         // 3. Resumen y confirmación
         menuCliente.mostrarResumen(venta);

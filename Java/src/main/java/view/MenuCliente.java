@@ -1,5 +1,6 @@
 package view;
 
+import controller.Admin.GestionarIVA;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import model.Celular;
@@ -168,7 +169,15 @@ public void mostrarPedidos(List<Venta> pedidos) {
 
     System.out.printf("| Pago: %-43s |%n", venta.getMetodoPago());
     System.out.printf("| Entrega: %-40s |%n", venta.getLugar());
+    
+    double baseSinIva = venta.getTotal() / (1 + GestionarIVA.TASA);
+    double iva = venta.getTotal() - baseSinIva;
+    double descuento = venta.getSubtotal() - baseSinIva;
 
+    System.out.printf("Subtotal:    $%,.2f%n", venta.getSubtotal());
+    System.out.printf("Descuento:  -$%,.2f%n", descuento);
+    System.out.printf("IVA 19%%:     $%,.2f%n", iva);
+    
     System.out.println("+--------------------------------------------------+");
     System.out.printf("| TOTAL: $%-42.2f |%n", venta.getTotal());
     System.out.println("+--------------------------------------------------+");
