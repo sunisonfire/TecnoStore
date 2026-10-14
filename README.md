@@ -18,8 +18,9 @@ Aplica Programación Orientada a Objetos, colecciones y Stream API, manejo de ex
 6. [Patrones de diseño](#patrones-de-diseño)
 7. [Reportes y Stream API](#reportes-y-stream-api)
 8. [Instalación y ejecución](#instalación-y-ejecución)
-9. [Capturas de ejecución](#capturas-de-ejecución)
-10. [Autores](#autores)
+9. [Manejo de excepciones](#manejo-de-excepciones)
+10. [Capturas de ejecución](#capturas-de-ejecución)
+11. [Autores](#autores)
 
 ---
 
@@ -134,6 +135,55 @@ Base de datos `tecnostore` en MySQL (`database/tecnostore_db.sql`).
 | `celular` | Modelo, precio, stock, marca, sistema operativo (`IOS`/`ANDROID`) y gama (`ALTA`/`MEDIA`/`BAJA`) |
 | `venta` | Cliente, fecha y hora, método de pago, estado, lugar, subtotal y total |
 | `detalle_venta` | Celular, cantidad y precio unitario de cada línea de una venta |
+
+### 3. Persistencia con JDBC
+
+`Conexion` entrega la conexión a MySQL y es un Singleton (ver [patrones](#patrones-de-diseño)). Las clases DAO la obtienen con `Conexion.getInstancia().conexion()`.
+
+**Consultas con `PreparedStatement`.** Todo el SQL usa parámetros (`?`) en lugar de concatenar texto, lo que evita la inyección SQL. Los `enum` de Java se guardan como texto con `name()` y se leen con `valueOf()`:
+
+```java
+String sql = "UPDATE celular SET stock = ? WHERE id_celular = ?";
+
+try (Connection c = conexion.conexion();
+     PreparedStatement ps = c.prepareStatement(sql)) {
+    ps.setInt(1, nuevoStock);
+    ps.setInt(2, idCelular);
+    return ps.executeUpdate() > 0;
+}
+```
+
+**Recursos cerrados automáticamente.** `Connection`, `PreparedStatement` y `ResultSet` se declaran dentro de `try-with-resources`, así que se cierran aunque ocurra un error.
+
+**De fila a objeto.** Cada DAO tiene un método `mapear(ResultSet)` que convierte una fila en una entidad y se reutiliza en todos los `SELECT`. `CelularDao.mapear()` usa `CelularFactory.desdeBD`, y `VentaDao.mapear()` arma el `Cliente` con un solo `JOIN` y carga los detalles de la venta.
+
+**IDs generados por MySQL.** Al insertar se usa `Statement.RETURN_GENERATED_KEYS` y el `AUTO_INCREMENT` se copia al objeto (`setIdCelular`, `setIdVenta`).
+
+**Transacciones.** Guardar una venta toca varias tablas (`venta`, `detalle_venta` y `celular`), así que `VentaDao` usa una sola transacción:
+
+```java
+c.setAutoCommit(false);
+try {
+    // 1. insertar la venta y obtener su id
+    // 2. por cada detalle: descontar stock e insertar la línea
+    c.commit();
+    return true;
+} catch (SQLException e) {
+    c.rollback();   // si algo falla, no queda nada a medias
+    throw e;
+}
+```
+
+Las operaciones `insertar`, `actualizar`, `actualizarEstado` y `eliminar` de `VentaDao` funcionan así. Los métodos de `CelularDao` que participan en la transacción (`descontarStock` y `reponerStock`) reciben la `Connection` por parámetro para trabajar dentro de ella.
+
+**Stock sin condiciones de carrera.** El descuento se hace en una sola sentencia que valida y resta a la vez:
+
+```java
+UPDATE celular SET stock = stock - ? WHERE id_celular = ? AND stock >= ?
+```
+
+Si no alcanza el stock, no se actualiza ninguna fila, `descontarStock` devuelve `false` y `insertar` lanza una excepción que provoca el `rollback` de toda la venta.
+
 
 ### Decisiones de diseño
 
@@ -396,6 +446,77 @@ try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
 | Administrador | `juan_admin` | `654321` |
 
 ---
+## Manejo de excepciones
+
+El sistema evita que un dato inválido o un fallo externo detenga el programa. Los errores se atienden en cuatro puntos:
+
+| Nivel | Dónde | Cómo se maneja |
+|---|---|---|
+| Entrada del usuario | `view.Validaciones` | Se captura `NumberFormatException` y se repite la solicitud hasta recibir un valor válido |
+| Reglas de negocio | `CelularFactory` | Lanza `IllegalArgumentException` si el precio o el stock no son válidos |
+| Base de datos | Capa DAO | Se captura `SQLException`, se hace `rollback` si había transacción y se devuelve `false`, `null` o una lista vacía |
+| Archivos | `GestionarReporte` | `try-with-resources` cierra el archivo y `catch (IOException)` informa el problema |
+
+### Entrada del usuario
+
+```java
+while (true) {
+    System.out.println(mensaje);
+    try {
+        return Integer.parseInt(sc.nextLine().trim());
+    } catch (NumberFormatException e) {
+        System.out.println("Error, se espera un valor entero");
+    }
+}
+```
+
+### Reglas de negocio
+
+```java
+if (precio <= 0) throw new IllegalArgumentException("El precio debe ser positivo");
+if (stock < 0)   throw new IllegalArgumentException("El stock no puede ser negativo");
+```
+
+### Base de datos
+
+Los DAO no dejan escapar la `SQLException`. La capturan, muestran el mensaje y devuelven un valor que el controlador sabe interpretar. Cuando hay una transacción, primero se deshace:
+
+```java
+try {
+    // ... operaciones de la venta
+    c.commit();
+    return true;
+} catch (SQLException e) {
+    c.rollback();
+    throw e;
+}
+// ... catch externo:
+// System.err.println("Error al insertar venta: " + e.getMessage());
+// return false;
+```
+
+El controlador reacciona según ese resultado, y el usuario ve un mensaje claro en lugar de un error técnico:
+
+```java
+if (ventaDao.eliminar(venta.getIdVenta())) {
+    System.out.println("Venta eliminada.");
+} else {
+    System.out.println("No se pudo eliminar la venta.");
+}
+```
+
+Una excepción también se usa a propósito: si un detalle no tiene stock suficiente, `insertar` lanza una `SQLException` propia para forzar el `rollback` de toda la venta.
+
+### Archivos
+
+```java
+try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
+    // ... escritura del reporte
+} catch (IOException e) {
+    System.out.println("No se pudo escribir el archivo: " + e.getMessage());
+}
+```
+--
 
 ## Capturas de ejecución
 
