@@ -4,7 +4,7 @@ import model.Celular;
 import model.Celular.Gama;
 import model.Celular.SistemaOperativo;
 import model.Marca;
-
+// FACTORYY
 public class CelularFactory {
 
     // Celular NUEVO (sin id, lo asigna la BD). Lo usa agregarCelular()

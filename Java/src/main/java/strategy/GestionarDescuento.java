@@ -1,5 +1,5 @@
 package strategy;
-
+//USA LA ESTRATEGIA QUE LE PASO PARA GESTIONAR LOS DESCUENTOS SIN CALCULAR NADA
 public class GestionarDescuento {
 
     private final TipoDescuento tipoDescuento;
@@ -11,7 +11,7 @@ public class GestionarDescuento {
     public double aplicar(double subtotal) {
     if (tipoDescuento == null) {
         throw new IllegalStateException("No se ha seleccionado una estrategia de descuento");
-    }
-    return subtotal - tipoDescuento.descuento(subtotal);   // base ya descontada, sin IVA
+    }//     TOTAL  -   VALOR DEL DESCUENTO
+    return subtotal - tipoDescuento.descuento(subtotal);  
 }
 }

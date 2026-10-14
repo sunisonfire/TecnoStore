@@ -215,7 +215,6 @@ Como los controladores usan la interfaz (`private final IVentaDao ventaDao = new
 
 Antes de operar, `buscarVenta()` valida el ID con `EnteroRango` (entre 1 y el último ID existente) y comprueba que la venta exista.
 
-> 📝 *Pendiente: explicar cómo se registra una venta nueva y se descuenta el stock (`GestionarPedido` y `VentaDao.insertar`).*
 
 ### 6. IVA del 19 %
 
@@ -239,7 +238,6 @@ do {
 } while (!r.equals("s") && !r.equals("n"));
 ```
 
-> 📝 *Pendiente: agregar el ejemplo de `Correo.java` (formato de email con expresión regular).*
 
 ---
 
@@ -305,8 +303,6 @@ public class DescuentoPorMonto implements TipoDescuento {
 
 Implementaciones: `DescuentoPorMonto`, `DescuentoClienteFrecuente` y `SinDescuento`. Para agregar una nueva regla basta con crear otra clase que implemente `TipoDescuento`, sin tocar el código existente (principio abierto/cerrado).
 
-> 📝 *Pendiente: explicar cómo `GestionarDescuento` elige la estrategia (necesito ese archivo).*
-
 ---
 
 ## Reportes y Stream API
@@ -329,7 +325,7 @@ celularDao.obtenerTodos().stream()
         .toList();
 ```
 
-![Reporte de stock bajo](img/reporte_stock_bajo.png)
+![Reporte de stock bajo](Capturas/reporte%20-%20stockBajo.png)
 
 ### Top 3 de celulares más vendidos
 
@@ -348,13 +344,13 @@ unidades.entrySet().stream()
         .forEach(...);
 ```
 
-![Top 3 más vendidos](img/reporte_top3.png)
+![Top 3 más vendidos](Capturas/reporte%20-%20Mas%20vendidos.png)
 
 ### Ventas totales
 
 Muestra las ventas válidas, el número de ventas, las unidades vendidas y el total, calculados con `mapToDouble(...).sum()` y `flatMap`.
 
-![Ventas totales](img/reporte_ventas_totales.png)
+![Ventas totales](Capturas/reporte%20-%20Totales.png)
 
 ### Archivo `reporte_ventas.txt`
 
@@ -368,7 +364,7 @@ try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
 }
 ```
 
-![Archivo de reporte](img/reporte_txt.png)
+![Archivo de reporte](Capturas/reportesAnalisis.png)
 
 ---
 
@@ -389,7 +385,6 @@ try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
    ```
 2. **Crear la base de datos**: ejecutar el script `database/tecnostore_db.sql` en MySQL. Crea la base `tecnostore`, las tablas y datos de prueba.
 3. **Configurar la conexión** en `src/dao/implement/Conexion.java`: servidor y puerto (`localhost:3306`), base de datos `tecnostore`, usuario y contraseña de MySQL.
-   > ⚠️ No subas tu contraseña real al repositorio.
 4. **Configurar la ruta del reporte** en `GestionarReporte.java` (constante `ARCHIVO`) para que apunte a una carpeta de tu equipo.
 5. **Ejecutar** la clase `TecnoStoreD.java` desde NetBeans.
 
@@ -406,18 +401,16 @@ try (BufferedWriter w = Files.newBufferedWriter(ARCHIVO)) {
 
 | Función | Captura |
 |---|---|
-| Ingreso al sistema | ![Ingreso](img/ingreso.png) |
-| Listar celulares | ![Listar celulares](img/listar_celulares.png) |
-| Registrar celular | ![Registrar celular](img/registrar_celular.png) |
-| Registrar cliente | ![Registrar cliente](img/registrar_cliente.png) |
-| Crear pedido | ![Crear pedido](img/crear_pedido.png) |
-| Detalle de venta | ![Detalle de venta](img/detalle_venta.png) |
-| Validaciones (error de entrada) | ![Validación](img/validacion.png) |
+| Ingreso al sistema | ![Ingreso](Capturas/menuIngreso%20-%20Admin%20-%203%20Intentos.png) |
+| Listar celulares | ![Listar celulares](Capturas/listarCelulares.png) |
+| Registrar celular | ![Registrar celular](Capturas/agregar_celular.png) |
+| Registrar cliente | ![Registrar cliente](Capturas/registrar_cliente.png) |
+| Crear pedido | ![Crear pedido](Capturas/crear_pedido.png) |
+| Detalle de venta | ![Detalle de venta](Capturas/detalle_venta.png) |
+| Validaciones (error de entrada) | ![Validación](Capturas/validaciones.png) |
 
 ---
 
 ## Autores
 
-Proyecto académico desarrollado como ejercicio de aplicación de Java, Programación Orientada a Objetos, bases de datos y patrones de diseño.
-
-- _Tu nombre aquí_
+@sunisonfire

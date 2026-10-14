@@ -1,12 +1,15 @@
 package model;
 
-public class Persona {
+import java.io.Serializable;
+
+public class Persona implements Serializable{
     private int idPersona;
     private String nombre;
     private String apellido;
     private String email;
     private String identificacion;
     private String telefono;
+    private static final long serialVersionUID=1L;
 
     // Constructor completo (desde BD)
     public Persona(int idPersona, String nombre, String apellido, String email,String identificacion, String telefono) {

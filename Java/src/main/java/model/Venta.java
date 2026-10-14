@@ -1,10 +1,11 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Venta {
+public class Venta implements Serializable {
     private int idVenta;
     private Cliente cliente;
     private LocalDateTime fechaHora;
@@ -14,6 +15,7 @@ public class Venta {
     private double subtotal;
     private double total;
     private List<DetalleVenta> detalles;
+    private static final long serialVersionUID=1L;
     
     public enum MetodoPago {
         PSE, TARJETA, NEQUI, TRANSFERENCIA
