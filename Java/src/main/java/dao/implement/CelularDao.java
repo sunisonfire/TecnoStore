@@ -20,7 +20,7 @@ import model.Marca;
  */
 public class CelularDao implements ICelularDao {
 
-    private final Conexion conexion = new Conexion();
+    private final Conexion conexion = Conexion.getInstancia();
     private final MarcaDao marcaDao = new MarcaDao();   // debe tener obtenerPorId(int)
 
     private static final String SELECT_BASE = """
@@ -215,4 +215,21 @@ public class CelularDao implements ICelularDao {
         }
         return false;
     }
+    
+    @Override
+public int obtenerUltimoId() {
+    String sql = "SELECT MAX(id_celular) FROM celular";
+
+    try (Connection c = conexion.conexion();
+         PreparedStatement ps = c.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        if (rs.next()) {
+            return rs.getInt(1);   // devuelve 0 si la tabla está vacía
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al obtener el último id: " + e.getMessage());
+    }
+    return 0;
+}
 }

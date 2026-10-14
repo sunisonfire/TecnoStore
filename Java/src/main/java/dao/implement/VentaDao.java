@@ -20,7 +20,7 @@ import model.Venta;
 public class VentaDao implements IVentaDao {
 
     private final CelularDao celularDao = new CelularDao();
-    private final Conexion conexion = new Conexion();
+    private final Conexion conexion = Conexion.getInstancia();
     private final DetalleVentaDao detalleVentaDao = new DetalleVentaDao();
 
     // Consulta base: venta + cliente + persona (el cliente se arma con un solo JOIN)
@@ -242,41 +242,56 @@ public class VentaDao implements IVentaDao {
     // ==================== D - delete ====================
     // Borra los detalles y luego la venta
     @Override
-public boolean eliminar(int idVenta) {
-    Venta venta = obtenerPorId(idVenta);
-    if (venta == null) {
+    public boolean eliminar(int idVenta) {
+        Venta venta = obtenerPorId(idVenta);
+        if (venta == null) {
+            return false;
+        }
+
+        String sql = "DELETE FROM venta WHERE id_venta = ?";
+
+        try (Connection c = conexion.conexion()) {
+            c.setAutoCommit(false);
+            try {
+                // Si no estaba cancelada, el stock sigue descontado: se devuelve
+                if (venta.getEstado() != Venta.Estado.CANCELADO) {
+                    for (DetalleVenta d : venta.getDetalles()) {
+                        celularDao.reponerStock(c, d.getCelular().getIdCelular(), d.getCantidad());
+                    }
+                }
+
+                detalleVentaDao.eliminarPorVenta(c, idVenta);
+
+                boolean eliminada;
+                try (PreparedStatement ps = c.prepareStatement(sql)) {
+                    ps.setInt(1, idVenta);
+                    eliminada = ps.executeUpdate() > 0;
+                }
+
+                c.commit();
+                return eliminada;
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar venta: " + e.getMessage());
+        }
         return false;
     }
 
-    String sql = "DELETE FROM venta WHERE id_venta = ?";
+    @Override
+    public int obtenerUltimoId() {
+        String sql = "SELECT MAX(id_venta) FROM venta";
 
-    try (Connection c = conexion.conexion()) {
-        c.setAutoCommit(false);
-        try {
-            // Si no estaba cancelada, el stock sigue descontado: se devuelve
-            if (venta.getEstado() != Venta.Estado.CANCELADO) {
-                for (DetalleVenta d : venta.getDetalles()) {
-                    celularDao.reponerStock(c, d.getCelular().getIdCelular(), d.getCantidad());
-                }
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);   // devuelve 0 si no hay ventas
             }
-
-            detalleVentaDao.eliminarPorVenta(c, idVenta);
-
-            boolean eliminada;
-            try (PreparedStatement ps = c.prepareStatement(sql)) {
-                ps.setInt(1, idVenta);
-                eliminada = ps.executeUpdate() > 0;
-            }
-
-            c.commit();
-            return eliminada;
         } catch (SQLException e) {
-            c.rollback();
-            throw e;
+            System.err.println("Error al obtener el último id de venta: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("Error al eliminar venta: " + e.getMessage());
+        return 0;
     }
-    return false;
-}
 }

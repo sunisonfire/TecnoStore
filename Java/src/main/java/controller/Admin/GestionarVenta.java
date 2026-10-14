@@ -21,7 +21,7 @@ public class GestionarVenta {
         List<Venta> ventas = ventaDao.obtenerTodos();
         menu.mostrarVentas(ventas);
 
-        if (!ventas.isEmpty() && confirmacion.validarConfirmacion("¿Ver el detalle de una venta?")) {
+        if (!ventas.isEmpty() && confirmacion.validarConfirmacion("Ver el detalle de una venta?")) {
             Venta venta = buscarVenta();
             if (venta != null) {
                 menu.mostrarDetalleVenta(venta);
@@ -95,11 +95,11 @@ public class GestionarVenta {
 
     // ---------- Auxiliar ----------
     private Venta buscarVenta() {
-        int id = entero.validarEnteroRango("ID de la venta: ", 1, Integer.MAX_VALUE);
-        Venta venta = ventaDao.obtenerPorId(id);
-        if (venta == null) {
-            System.out.println("No existe una venta con ese ID.");
-        }
-        return venta;
+    int id = entero.validarEnteroRango("ID de la venta: ", 1, ventaDao.obtenerUltimoId());
+    Venta venta = ventaDao.obtenerPorId(id);
+    if (venta == null) {
+        System.out.println("No existe una venta con ese ID.");
     }
+    return venta;
+}
 }

@@ -28,4 +28,5 @@ public interface IVentaDao {
 
     List<Venta> obtenerTodos();
     
+    int obtenerUltimoId();
 }

@@ -15,8 +15,7 @@ import model.Marca;
  */
 public class MarcaDao implements IMarcaDao {
 
-    private final Conexion conexion = new Conexion();
-
+    private final Conexion conexion = Conexion.getInstancia();
     private static final String SELECT_BASE = """
             SELECT id_marca, nombre
             FROM marca
@@ -30,14 +29,12 @@ public class MarcaDao implements IMarcaDao {
     }
 
     // ==================== C - create ====================
-
     // Inserta y deja el id generado en el objeto
     @Override
     public boolean insertar(Marca marca) {
         String sql = "INSERT INTO marca (nombre) VALUES (?)";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, marca.getNombre());
 
@@ -58,7 +55,6 @@ public class MarcaDao implements IMarcaDao {
     }
 
     // ==================== R - read ====================
-
     @Override
     public Marca obtenerPorId(int idMarca) {
         return obtenerUna(SELECT_BASE + " WHERE id_marca = ?", idMarca);
@@ -74,9 +70,7 @@ public class MarcaDao implements IMarcaDao {
         List<Marca> marcas = new ArrayList<>();
         String sql = SELECT_BASE + " ORDER BY nombre";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 marcas.add(mapear(rs));
@@ -89,8 +83,7 @@ public class MarcaDao implements IMarcaDao {
 
     // Busca una sola fila con un parámetro (int o String)
     private Marca obtenerUna(String sql, Object parametro) {
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setObject(1, parametro);
             try (ResultSet rs = ps.executeQuery()) {
@@ -105,7 +98,6 @@ public class MarcaDao implements IMarcaDao {
     }
 
     // ---------- Duplicados ----------
-
     @Override
     public boolean existeNombre(String nombre) {
         return existe("SELECT 1 FROM marca WHERE nombre = ?", nombre);
@@ -118,8 +110,7 @@ public class MarcaDao implements IMarcaDao {
     }
 
     private boolean existe(String sql, Object... parametros) {
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             for (int i = 0; i < parametros.length; i++) {
                 ps.setObject(i + 1, parametros[i]);
@@ -134,13 +125,11 @@ public class MarcaDao implements IMarcaDao {
     }
 
     // ==================== U - update ====================
-
     @Override
     public boolean actualizar(Marca marca) {
         String sql = "UPDATE marca SET nombre = ? WHERE id_marca = ?";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, marca.getNombre());
             ps.setInt(2, marca.getIdMarca());
@@ -152,13 +141,11 @@ public class MarcaDao implements IMarcaDao {
     }
 
     // ==================== D - delete ====================
-
     @Override
     public boolean eliminar(int idMarca) {
         String sql = "DELETE FROM marca WHERE id_marca = ?";
 
-        try (Connection c = conexion.conexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = conexion.conexion(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, idMarca);
             return ps.executeUpdate() > 0;

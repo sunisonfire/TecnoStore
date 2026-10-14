@@ -19,7 +19,7 @@ import model.Persona;
  */
 public class PersonaDao implements IPersonaDao {
 
-    private final Conexion conexion = new Conexion();
+    private final Conexion conexion = Conexion.getInstancia();
 
     private static final String SELECT_BASE = """
             SELECT id_persona, nombre, apellido, email, identificacion, telefono

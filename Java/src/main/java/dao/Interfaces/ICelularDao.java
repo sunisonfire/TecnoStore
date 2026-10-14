@@ -35,4 +35,5 @@ public interface ICelularDao {
     // Para cancelar o eliminar una venta: devuelve las unidades al stock
     boolean reponerStock(Connection c, int idCelular, int cantidad) throws SQLException;
     
+    int obtenerUltimoId();
 }

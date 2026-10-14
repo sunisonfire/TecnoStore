@@ -99,7 +99,8 @@ public class GestionarPedido {
         }
 
         menuCliente.mostrarCatalogo(disponibles);
-        int id = entero.validarEnteroRango("ID del celular (0 para volver): ", 0, Integer.MAX_VALUE);
+        int ultimoId = celularDao.obtenerUltimoId();
+        int id = entero.validarEnteroRango("ID del celular (0 para volver): ", 0, ultimoId);
         if (id == 0) {
             return null;
         }
@@ -148,7 +149,8 @@ public class GestionarPedido {
         }
 
         menuCliente.mostrarPedidos(pendientes);
-        int id = entero.validarEnteroRango("ID del pedido a cancelar (0 para volver): ", 0, Integer.MAX_VALUE);
+        int ultimoId = pendientes.stream().mapToInt(Venta::getIdVenta).max().orElse(0);
+        int id = entero.validarEnteroRango("ID del pedido a cancelar (0 para volver): ", 0, ultimoId);
         if (id == 0) {
             return;
         }

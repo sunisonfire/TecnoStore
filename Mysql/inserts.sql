@@ -17,24 +17,24 @@ INSERT INTO celular (modelo, precio, stock, id_marca, sistema_operativo, gama) V
 
 -- ===================== PERSONAS =====================
 INSERT INTO persona (nombre, apellido, email, identificacion, telefono) VALUES
-('Carlos',    'Gómez',    'carlos.gomez@email.com',    '1012345678', '3001234567'),
-('Laura',     'Martínez', 'laura.martinez@email.com',  '1023456789', '3109876543'),
-('Andrés',    'Rojas',    'andres.rojas@email.com',    '1034567890', '3205551122'),
-('Valentina', 'Pérez',    'valentina.perez@email.com', '1045678901', '3157778899'),
-('Sofía',     'Ramírez',  'sofia.ramirez@email.com',   '1056789012', '3012223344'),
-('Juan',      'Torres',   'juan.torres@email.com',     '1067890123', '3128889900');
+('Sara',    'Ramirez',    'sara.rami@email.com',    '1012345678', '3001234567'),
+('Ana',     'Gamboa', 'anita@email.com',  '1023456789', '3109876543'),
+('Santiago',    'Mendoza',    'santiago.mita@email.com',    '1034567890', '3205551122'),
+('Isabella', 'Gualdron',    'isavs@email.com', '1045678901', '3157778899'),
+('Danna',     'Tellez',  'sunisonfire@email.com',   '1056789012', '3012223344'),
+('Juan',      'Tellez',   'juanisonfire@email.com',     '1067890123', '3128889900');
 
 -- ===================== CLIENTES =====================
 INSERT INTO cliente (id_persona) VALUES
-((SELECT id_persona FROM persona WHERE email = 'carlos.gomez@email.com')),
-((SELECT id_persona FROM persona WHERE email = 'laura.martinez@email.com')),
-((SELECT id_persona FROM persona WHERE email = 'andres.rojas@email.com')),
-((SELECT id_persona FROM persona WHERE email = 'valentina.perez@email.com'));
+((SELECT id_persona FROM persona WHERE email = 'sara.rami@email.com')),
+((SELECT id_persona FROM persona WHERE email = 'anita@email.com')),
+((SELECT id_persona FROM persona WHERE email = 'santiago.mita@email.com')),
+((SELECT id_persona FROM persona WHERE email = 'isavs@email.com'));
 
 -- ===================== ADMINISTRADORES =====================
 INSERT INTO administrador (id_persona, username, contrasena) VALUES
-((SELECT id_persona FROM persona WHERE email = 'sofia.ramirez@email.com'), 'sofia_admin', 123456),
-((SELECT id_persona FROM persona WHERE email = 'juan.torres@email.com'),   'juan_admin',  654321);
+((SELECT id_persona FROM persona WHERE email = 'sunisonfire@email.com'), 'sofia_admin', 123456),
+((SELECT id_persona FROM persona WHERE email = 'juanisonfire@email.com'),   'juan_admin',  654321);
 
 -- ===================== VENTAS =====================
 -- (id_cliente 1 a 4 = Carlos, Laura, Andrés, Valentina, en ese orden)
@@ -48,10 +48,5 @@ INSERT INTO venta (id_cliente, fecha_hora, metodo_pago, estado, lugar, subtotal,
 -- ===================== DETALLES DE VENTA =====================
 INSERT INTO detalle_venta (id_venta, id_celular, cantidad, precio_unitario) VALUES
 (1, (SELECT id_celular FROM celular WHERE modelo = 'Galaxy S24'),    1, 3500000),
-(1, (SELECT id_celular FROM celular WHERE modelo = 'Redmi 12C'),     2,  520000),
 (2, (SELECT id_celular FROM celular WHERE modelo = 'iPhone 15'),     1, 4800000),
-(3, (SELECT id_celular FROM celular WHERE modelo = 'Redmi Note 13'), 2,  900000),
-(3, (SELECT id_celular FROM celular WHERE modelo = 'Moto G54'),      1,  780000),
-(4, (SELECT id_celular FROM celular WHERE modelo = 'iPhone 13'),     1, 2900000),
-(4, (SELECT id_celular FROM celular WHERE modelo = 'Galaxy A15'),    1,  850000),
-(5, (SELECT id_celular FROM celular WHERE modelo = 'Moto Edge 40'),  1, 2100000);
+(3, (SELECT id_celular FROM celular WHERE modelo = 'Redmi Note 13'), 2,  900000);

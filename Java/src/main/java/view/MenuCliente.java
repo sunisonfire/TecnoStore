@@ -143,43 +143,57 @@ public void mostrarPedidos(List<Venta> pedidos) {
 }
 
     public void mostrarResumen(Venta venta) {
-    System.out.println("""
+    final int ANCHO = 69;
+    String linea = "+" + "-".repeat(ANCHO - 2) + "+";
+    String separador = "+" + "-".repeat(24) + "+" + "-".repeat(10)
+            + "+" + "-".repeat(15) + "+" + "-".repeat(15) + "+";
 
-            +--------------------------------------------------+
-            |              RESUMEN DE TU COMPRA                |
-            +--------------------------------------------------+
-            """);
-
-    System.out.printf("| %-22s | %-8s | %-11s | %-11s |%n",
-            "Producto", "Cantidad", "Precio", "Subtotal");
-
-    System.out.println(
-            "+------------------------+----------+-------------+-------------+");
-
-    for (DetalleVenta d : venta.getDetalles()) {
-        System.out.printf("| %-22s | %-8d | $%-10.2f | $%-10.2f |%n",
-                d.getCelular().getModelo(),
-                d.getCantidad(),
-                d.getPrecioUnitario(),
-                d.getSubtotal());
-    }
-
-    System.out.println(
-            "+------------------------+----------+-------------+-------------+");
-
-    System.out.printf("| Pago: %-43s |%n", venta.getMetodoPago());
-    System.out.printf("| Entrega: %-40s |%n", venta.getLugar());
-    
     double baseSinIva = venta.getTotal() / (1 + GestionarIVA.TASA);
     double iva = venta.getTotal() - baseSinIva;
     double descuento = venta.getSubtotal() - baseSinIva;
 
-    System.out.printf("Subtotal:    $%,.2f%n", venta.getSubtotal());
-    System.out.printf("Descuento:  -$%,.2f%n", descuento);
-    System.out.printf("IVA 19%%:     $%,.2f%n", iva);
-    
-    System.out.println("+--------------------------------------------------+");
-    System.out.printf("| TOTAL: $%-42.2f |%n", venta.getTotal());
-    System.out.println("+--------------------------------------------------+");
+    System.out.println();
+    System.out.println(linea);
+    System.out.println("|" + centrar("RESUMEN DE TU COMPRA", ANCHO - 2) + "|");
+    System.out.println(linea);
+
+    System.out.printf("| %-22s | %-8s | %-13s | %-13s |%n",
+            "Producto", "Cantidad", "Precio", "Subtotal");
+    System.out.println(separador);
+
+    for (DetalleVenta d : venta.getDetalles()) {
+        System.out.printf("| %-22s | %-8d | %13s | %13s |%n",
+                cortar(d.getCelular().getModelo(), 22),
+                d.getCantidad(),
+                dinero(d.getPrecioUnitario()),
+                dinero(d.getSubtotal()));
+    }
+    System.out.println(separador);
+
+    System.out.printf("| %-65s |%n", "Pago: " + venta.getMetodoPago());
+    System.out.printf("| %-65s |%n", "Entrega: " + venta.getLugar());
+    System.out.println(linea);
+
+    System.out.printf("| %-20s %44s |%n", "Subtotal:", dinero(venta.getSubtotal()));
+    System.out.printf("| %-20s %44s |%n", "Descuento:", "-" + dinero(descuento));
+    System.out.printf("| %-20s %44s |%n", "IVA 19%:", dinero(iva));
+    System.out.println(linea);
+
+    System.out.printf("| %-20s %44s |%n", "TOTAL:", dinero(venta.getTotal()));
+    System.out.println(linea);
+}
+
+// ---------- Auxiliares de formato ----------
+private String dinero(double valor) {
+    return String.format("$%,.1f", valor);
+}
+
+private String cortar(String texto, int max) {
+    return texto.length() <= max ? texto : texto.substring(0, max);
+}
+
+private String centrar(String texto, int ancho) {
+    int izquierda = (ancho - texto.length()) / 2;
+    return " ".repeat(izquierda) + texto + " ".repeat(ancho - texto.length() - izquierda);
 }
 }

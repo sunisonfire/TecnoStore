@@ -15,7 +15,7 @@ import model.Administrador;
  */
 public class AdministradorDao implements IAdministradorDao {
 
-    private final Conexion conexion = new Conexion();
+    private final Conexion conexion = Conexion.getInstancia();
     private final PersonaDao personaDao = new PersonaDao();
 
     // Consulta base: une persona con administrador

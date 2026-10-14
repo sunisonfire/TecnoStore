@@ -17,7 +17,7 @@ import model.DetalleVenta;
  */
 public class DetalleVentaDao implements IDetalleVenta {
 
-    private final Conexion conexion = new Conexion();
+    private final Conexion conexion = Conexion.getInstancia();
     private final CelularDao celularDao = new CelularDao();   // debe tener obtenerPorId(int)
 
     private static final String SELECT_BASE = """

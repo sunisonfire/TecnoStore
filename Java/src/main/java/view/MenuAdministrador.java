@@ -94,7 +94,7 @@ public class MenuAdministrador {
     }
 
     public int opcionReportes() {
-    return v.validarEnteroRango("""
+        return v.validarEnteroRango("""
             +--------------------------------+
             |      REPORTES Y ANALISIS       |
             +--------------------------------+
@@ -105,7 +105,7 @@ public class MenuAdministrador {
             |  [0] Volver                    |
             +--------------------------------+
             """, 0, 4);
-}
+    }
 
     public String pedirUsername() {
         System.out.print("Usuario: ");
@@ -126,20 +126,28 @@ public class MenuAdministrador {
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
     }
-    
 
     public void mostrarClientes(List<Cliente> clientes) {
         if (clientes.isEmpty()) {
             System.out.println("No hay clientes registrados.");
             return;
         }
-        System.out.printf("%-5s | %-15s | %-15s | %-28s | %-12s%n",
-                "ID", "Nombre", "Apellido", "Email", "Teléfono");
+
+        String formato = "| %-5.5s | %-17.17s | %-20.20s | %-28.28s | %-12.12s |%n";
+        String separador = "+-" + "-".repeat(5) + "-+-" + "-".repeat(17) + "-+-" + "-".repeat(20)
+                + "-+-" + "-".repeat(28) + "-+-" + "-".repeat(12) + "-+";
+
+        System.out.println(separador);
+        System.out.printf(formato, "ID", "Nombre", "Apellido", "Email", "Telefono");
+        System.out.println(separador);
+
         for (Cliente c : clientes) {
-            System.out.printf("%-5d | %-15s | %-15s | %-28s | %-12s%n",
+            System.out.printf(formato,
                     c.getIdCliente(), c.getNombre(), c.getApellido(),
                     c.getEmail(), c.getTelefono());
         }
+
+        System.out.println(separador);
     }
 
     public String pedirTexto(String etiqueta) {

@@ -83,11 +83,3 @@ CREATE TABLE detalle_venta (
     CONSTRAINT fk_detalle_celular
         FOREIGN KEY (id_celular) REFERENCES celular(id_celular)
 );
-
--- ===================== DATOS DE PRUEBA =====================
-INSERT INTO marca (nombre) VALUES ('Samsung'), ('Apple'), ('Xiaomi');
-
-INSERT INTO celular (modelo, precio, stock, id_marca, sistema_operativo, gama) VALUES
-('Galaxy S24',    3500000, 10, 1, 'ANDROID', 'ALTA'),
-('iPhone 15',     4800000,  5, 2, 'IOS',     'ALTA'),
-('Redmi Note 13',  900000, 20, 3, 'ANDROID', 'MEDIA');
