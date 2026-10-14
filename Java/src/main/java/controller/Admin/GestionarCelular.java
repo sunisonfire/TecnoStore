@@ -17,6 +17,8 @@ public class GestionarCelular {
     private final Scanner sc = new Scanner(System.in);
     private final Confirmacion confirmacion = new Confirmacion();
 
+    
+    //PEDIR DATOS
     public int pedirIdCelular() {
         while (true) {
             System.out.print("ID del celular: ");
@@ -122,6 +124,8 @@ public class GestionarCelular {
         }
     }
 
+    
+    // MOSTRAR
     public void mostrarCelulares(List<Celular> celulares) {
     if (celulares.isEmpty()) {
         System.out.println("""
@@ -159,7 +163,7 @@ public class GestionarCelular {
     private final CelularDao celularDao = new CelularDao();
     private final MarcaDao marcaDao = new MarcaDao();
 
-    // ---------- Crear ----------
+    // C - CREAR
     public void agregarCelular() {
         String modelo = pedirTextoNoVacio("Modelo: ");
         int idMarca = pedirIdMarca(marcaDao.obtenerTodos());
@@ -178,12 +182,12 @@ public class GestionarCelular {
         }
     }
 
-    // ---------- Listar ----------
+    // R - LISTAR
     public void listarCelular() {
         mostrarCelulares(celularDao.obtenerTodos());
     }
 
-    // ---------- Eliminar ----------
+    // D - ELIMINAR
     public void eliminarCelular() {
         Celular celular = buscarCelular();
         if (celular == null) {
@@ -202,7 +206,7 @@ public class GestionarCelular {
         }
     }
 
-    // ---------- Actualizar ----------
+    // U - ACTUALIZAR
     public void actualizarModelo() {
         Celular celular = buscarCelular();
         if (celular == null) {
@@ -262,8 +266,8 @@ public class GestionarCelular {
         guardar(celular, "Precio actualizado.");
     }
 
-    // ---------- Auxiliares ----------
-    // Pide el id y busca el celular; si no existe avisa y devuelve null
+    // COMPLEMENTO 
+    // PEDIR ID Y BUSCAR CELULAR; si no existe avisa y devuelve null
     private Celular buscarCelular() {
         mostrarCelulares(celularDao.obtenerTodos());
         int id = pedirIdCelular();

@@ -1,13 +1,12 @@
 package model;
 
-import java.io.Serializable;
 
-public class DetalleVenta implements Serializable {
+
+public class DetalleVenta  {
     private int idDetalleVenta;
     private Celular celular;
     private int cantidad;
     private double precioUnitario;
-    private static final long serialVersionUID=1L;
     
     // Constructor completo (desde BD)
     public DetalleVenta(int idDetalleVenta, Celular celular, int cantidad, double precioUnitario) {

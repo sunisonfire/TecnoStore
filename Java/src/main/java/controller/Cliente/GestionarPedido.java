@@ -31,7 +31,7 @@ public class GestionarPedido {
     public void crearPedido(Cliente cliente) {
         List<DetalleVenta> carrito = new ArrayList<>();
 
-        // 1. Armar el carrito (todo en memoria)
+        // C - CREAR PEDIDO
         while (true) {
             Celular celular = elegirCelular();
 
@@ -61,7 +61,7 @@ public class GestionarPedido {
             }
         }
 
-        // 2. Datos de la compra
+        // DATOS DE LA COMPRAA
         Venta.MetodoPago metodo = menuCliente.pedirMetodoPago();
         Venta.Lugar lugar = menuCliente.pedirLugar();
 
@@ -72,14 +72,14 @@ public class GestionarPedido {
         double baseConDescuento = new GestionarDescuento(tipo).aplicar(venta.getSubtotal());
         venta.setTotal(GestionarIVA.conIva(baseConDescuento));
 
-        // 3. Resumen y confirmación
+        // RESUMEN DE LA COMPRA Y CONFIRMACION 
         menuCliente.mostrarResumen(venta);
         if (!confirmacion.validarConfirmacion("¿Confirmar la compra?")) {
             System.out.println("Compra cancelada. No se descontó nada del stock.");
             return;
         }
 
-        // 4. Recién aquí se escribe en la base de datos (venta + detalles + stock, una transacción)
+        // DESPUES DE LA CONFIRMACION SE ESCRIBE A LA BASE DE DATOS
         if (ventaDao.insertar(venta)) {
             System.out.println("¡Compra realizada! Pedido #" + venta.getIdVenta());
         } else {
@@ -87,7 +87,7 @@ public class GestionarPedido {
         }
     }
 
-    // ---------- Auxiliares ----------
+    // EXTRAS
     private Celular elegirCelular() {
         List<Celular> disponibles = celularDao.obtenerTodos().stream()
                 .filter(c -> c.getStock() > 0)
@@ -121,7 +121,7 @@ public class GestionarPedido {
                 .sum();
     }
 
-    // Si el celular ya está en el carrito, suma la cantidad en vez de repetir la fila
+    //SI SE REPITE EL CELULAR, SE SUMAN AL ANTERIOR
     private void agregarAlCarrito(List<DetalleVenta> carrito, Celular celular, int cantidad) {
         for (DetalleVenta d : carrito) {
             if (d.getCelular().getIdCelular() == celular.getIdCelular()) {
@@ -131,13 +131,14 @@ public class GestionarPedido {
         }
         carrito.add(new DetalleVenta(celular, cantidad, celular.getPrecio()));
     }
-
+    
+    // VER LOS PEDIDOS DEL CLIENTE
     public void verMisPedidos(Cliente cliente) {
         List<Venta> pedidos = ventaDao.obtenerPorCliente(cliente.getIdCliente());
         menuCliente.mostrarPedidos(pedidos);
     }
 
-// El cliente solo puede cancelar sus propios pedidos que sigan pendientes
+    // SI EL PEDIDO ES DEL CLIENTE ACTUAL Y ESTA EN PENDIENTE
     public void cancelarPedido(Cliente cliente) {
         List<Venta> pendientes = ventaDao.obtenerPorCliente(cliente.getIdCliente()).stream()
                 .filter(v -> v.getEstado() == Venta.Estado.PENDIENTE)
@@ -172,7 +173,7 @@ public class GestionarPedido {
         }
     }
 
-    // El controller decide la estrategia; GestionarDescuento solo la ejecuta
+    // STRATEGYYY
     private TipoDescuento elegirDescuento(Cliente cliente, double subtotal) {
         boolean esFrecuente = ventaDao.obtenerPorCliente(cliente.getIdCliente()).size() >= 3;
 

@@ -1,10 +1,8 @@
 package model;
 
-import java.io.Serializable;
 
-public class Celular implements Serializable{
+public class Celular {
     
-    private static final long serialVersionUID=1L;
     private int idCelular, stock;
     private String modelo;
     private double precio;

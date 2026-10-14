@@ -8,7 +8,7 @@ import model.Celular;
 
 public interface ICelularDao {
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
     boolean actualizar(Celular celular);
 
     // Fija el stock a un valor exacto (por ejemplo, desde el menú del administrador)
@@ -18,22 +18,23 @@ public interface ICelularDao {
     // Devuelve false si no alcanza el stock (así no queda negativo).
     boolean descontarStock(Connection c, int idCelular, int cantidad) throws SQLException;
 
-    // ==================== D - delete ====================
+    //D -ELIMINAR
     boolean eliminar(int idCelular);
 
-    // ==================== C - create ====================
+    // C - CREAR
     // Inserta y deja el id generado en el objeto
     boolean insertar(Celular celular);
 
-    // ==================== R - read ====================
+    // R - LEER
     Celular obtenerPorId(int idCelular);
 
     List<Celular> obtenerPorMarca(int idMarca);
 
     List<Celular> obtenerTodos();
 
-    // Para cancelar o eliminar una venta: devuelve las unidades al stock
+    // DEVOLVER UNIDADES SI SE CANCELA VENTA
     boolean reponerStock(Connection c, int idCelular, int cantidad) throws SQLException;
     
+    //EXTRA IG
     int obtenerUltimoId();
 }

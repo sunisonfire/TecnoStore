@@ -9,12 +9,12 @@ public class GestionarCliente {
     private final ClienteDao clienteDao = new ClienteDao();
     private final MenuAdministrador menuAdministrador = new MenuAdministrador();
 
-    // Antes se llamaba registrarse(String), pero en realidad hacía login.
+    // LOGIN CON EMAIL
     public Cliente login(String email) {
         return clienteDao.login(email);
     }
 
-    // Registro: lo llama GestionarFlujo con registrarse()
+    // REGISTRO SI NO EXISTE EN DB
     public void registrarse() {
         String nombre = menuAdministrador.pedirTexto("Nombre: ");
         String apellido = menuAdministrador.pedirTexto("Apellido: ");
@@ -47,7 +47,8 @@ public class GestionarCliente {
             System.out.println("No se pudo completar el registro.");
         }
     }
-
+    
+    //SI EXISTE
     public boolean existeEmailDeOtro(String email, int idPersona) {
         return clienteDao.existeEmailDeOtro(email, idPersona);
     }
@@ -56,14 +57,16 @@ public class GestionarCliente {
         return clienteDao.existeIdentificacionDeOtro(identificacion, idPersona);
     }
 
+    
+    //ACTUALIZAR
     public boolean actualizar(Cliente cliente) {
         return clienteDao.actualizar(cliente);
     }
-
+    //LISTAR
     public void listarCliente() {
         menuAdministrador.mostrarClientes(clienteDao.obtenerTodos());
     }
-
+    //ELIMINAR
     public boolean eliminarCliente(int idCliente) {
         return clienteDao.eliminar(idCliente);
     }

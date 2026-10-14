@@ -2,7 +2,7 @@ package controller.Admin;
 
 public final class GestionarIVA {
 
-    public static final double TASA = 0.19;   // el 19% vive solo aquí
+    public static final double TASA = 0.19;   // el 19% 
 
     private GestionarIVA() {
     }

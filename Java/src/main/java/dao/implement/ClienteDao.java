@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Cliente;
 
-/**
- * DAO de cliente. Los datos personales viven en la tabla persona, por eso
- * insertar, actualizar y eliminar se apoyan en PersonaDao dentro de una transacción.
- */
+//DATOS PERSONALES EN TABLA PERSONA
 public class ClienteDao implements IClienteDao {
 
     private final Conexion conexion = Conexion.getInstancia();
@@ -38,7 +35,7 @@ public class ClienteDao implements IClienteDao {
                 rs.getString("telefono"));
     }
 
-    // ==================== C - create (registrarse) ====================
+    // C - CREAR O REGISTRARSE MEJOR DICHO
 
     // Inserta en persona y luego en cliente. Deja el idPersona en el objeto.
     @Override
@@ -69,7 +66,7 @@ public class ClienteDao implements IClienteDao {
         return false;
     }
 
-    // ==================== R - read ====================
+    // R - LEER
 
     // Inicio de sesión: el cliente con ese correo, o null si no existe
     @Override
@@ -117,7 +114,7 @@ public class ClienteDao implements IClienteDao {
         return null;
     }
 
-    // ---------- Duplicados (delegan en PersonaDao) ----------
+    // DUPLICADOS?
 
     @Override
     public boolean existeEmail(String email) {
@@ -139,7 +136,7 @@ public class ClienteDao implements IClienteDao {
         return personaDao.existeIdentificacionDeOtra(identificacion, idPersona);
     }
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
 
     // Todos los datos del cliente están en persona
     @Override
@@ -147,7 +144,7 @@ public class ClienteDao implements IClienteDao {
         return personaDao.actualizar(cl);
     }
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
 
     // Borra el cliente y luego su persona
     @Override

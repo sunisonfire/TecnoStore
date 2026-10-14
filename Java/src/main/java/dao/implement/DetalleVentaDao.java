@@ -10,11 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.DetalleVenta;
 
-/**
- * DAO de detalle_venta. Un detalle no conoce su venta en el modelo, por eso
- * insertar recibe el idVenta. Los métodos con Connection se usan dentro de la
- * transacción de VentaDao.
- */
+//DETALLE NO CONOCE SU VENTA
 public class DetalleVentaDao implements IDetalleVenta {
 
     private final Conexion conexion = Conexion.getInstancia();
@@ -34,7 +30,7 @@ public class DetalleVentaDao implements IDetalleVenta {
                 rs.getDouble("precio_unitario"));
     }
 
-    // ==================== C - create ====================
+    // C - CREAR
 
     // Versión para transacciones: usa la conexión recibida y deja el id en d
     @Override
@@ -61,7 +57,7 @@ public class DetalleVentaDao implements IDetalleVenta {
         }
     }
 
-    // Versión independiente
+    // SOLITO SOLITO
     @Override
     public boolean insertar(DetalleVenta d, int idVenta) {
         try (Connection c = conexion.conexion()) {
@@ -72,7 +68,7 @@ public class DetalleVentaDao implements IDetalleVenta {
         return false;
     }
 
-    // ==================== R - read ====================
+    // R - LEER
 
     @Override
     public DetalleVenta obtenerPorId(int idDetalleVenta) {
@@ -93,7 +89,7 @@ public class DetalleVentaDao implements IDetalleVenta {
         return null;
     }
 
-    // Todos los detalles de una venta
+    // DETALLES DE LA VENTA
     @Override
     public List<DetalleVenta> obtenerPorVenta(int idVenta) {
         List<DetalleVenta> detalles = new ArrayList<>();
@@ -114,9 +110,9 @@ public class DetalleVentaDao implements IDetalleVenta {
         return detalles;
     }
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
 
-    // Ojo: no recalcula subtotal y total de la venta. Para eso usa VentaDao.actualizar.
+    // NO RECALCULA ES SUBTOTAL PUES
     @Override
     public boolean actualizar(DetalleVenta d) {
         String sql = "UPDATE detalle_venta SET id_celular = ?, cantidad = ?, precio_unitario = ? WHERE id_detalle_venta = ?";
@@ -135,7 +131,7 @@ public class DetalleVentaDao implements IDetalleVenta {
         return false;
     }
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
 
     @Override
     public boolean eliminar(int idDetalleVenta) {

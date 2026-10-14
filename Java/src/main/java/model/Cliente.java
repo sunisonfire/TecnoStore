@@ -1,10 +1,8 @@
 package model;
 
-import java.io.Serializable;
 
-public class Cliente extends Persona implements Serializable {
+public class Cliente extends Persona  {
     private final int idCliente;
-    private static final long serialVersionUID = 1L;
     // Constructor completo (desde BD)
     public Cliente(int idCliente, int idPersona, String nombre, String apellido,String email, String identificacion, String telefono) {
         super(idPersona, nombre, apellido, email, identificacion, telefono);

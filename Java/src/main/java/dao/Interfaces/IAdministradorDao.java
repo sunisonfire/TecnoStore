@@ -5,29 +5,29 @@ import model.Administrador;
 
 public interface IAdministradorDao {
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
     // Actualiza persona y administrador en una sola transacción
     boolean actualizar(Administrador a);
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
     // Borra el administrador y luego su persona
     boolean eliminar(int idAdministrador);
 
+    //EXISTE
     boolean existeEmail(String email);
 
     boolean existeIdentificacion(String identificacion);
 
-    // ---------- Duplicados ----------
+    // DUPLICADO?
     boolean existeUsername(String username);
 
-    // Para actualizar: ¿otro administrador distinto ya usa este username?
     boolean existeUsernameDeOtro(String username, int idAdministrador);
 
-    // ==================== C - create ====================
+    // C - CREAR
     // Inserta en persona y luego en administrador. Deja el idPersona en el objeto.
     boolean insertar(Administrador a);
 
-    // ==================== R - read ====================
+    // R - LEER
     // Inicio de sesión: el administrador si username y contraseña coinciden, o null
     Administrador login(String username, long contrasena);
 

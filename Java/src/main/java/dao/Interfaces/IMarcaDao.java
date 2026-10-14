@@ -5,23 +5,22 @@ import model.Marca;
 
 public interface IMarcaDao {
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
     boolean actualizar(Marca marca);
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
     boolean eliminar(int idMarca);
 
-    // ---------- Duplicados ----------
+    // DUPLICADOS?
     boolean existeNombre(String nombre);
 
-    // Para actualizar: ¿otra marca distinta ya usa este nombre?
     boolean existeNombreDeOtra(String nombre, int idMarca);
 
-    // ==================== C - create ====================
+    // C - CREAR
     // Inserta y deja el id generado en el objeto
     boolean insertar(Marca marca);
 
-    // ==================== R - read ====================
+    // R - LEER
     Marca obtenerPorId(int idMarca);
 
     Marca obtenerPorNombre(String nombre);

@@ -16,7 +16,7 @@ public class GestionarVenta {
     private final Confirmacion confirmacion = new Confirmacion();
     private final EnteroRango entero = new EnteroRango();
 
-    // ---------- Listar ----------
+    // R - LISTAR
     public void listarVenta() {
         List<Venta> ventas = ventaDao.obtenerTodos();
         menu.mostrarVentas(ventas);
@@ -29,7 +29,7 @@ public class GestionarVenta {
         }
     }
 
-    // ---------- Actualizar estado ----------
+    // U - ACTUALIZAR
     public void actualizarVenta() {
         menu.mostrarVentas(ventaDao.obtenerTodos());
         Venta venta = buscarVenta();
@@ -69,7 +69,7 @@ public class GestionarVenta {
         }
     }
 
-    // ---------- Eliminar ----------
+    // E - ELIMINAR
     public void eliminarVenta() {
         menu.mostrarVentas(ventaDao.obtenerTodos());
         Venta venta = buscarVenta();
@@ -93,7 +93,7 @@ public class GestionarVenta {
         }
     }
 
-    // ---------- Auxiliar ----------
+    // BUSCAR
     private Venta buscarVenta() {
     int id = entero.validarEnteroRango("ID de la venta: ", 1, ventaDao.obtenerUltimoId());
     Venta venta = ventaDao.obtenerPorId(id);

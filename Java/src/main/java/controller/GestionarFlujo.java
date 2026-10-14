@@ -10,8 +10,10 @@ import controller.Cliente.GestionarCuenta;
 import controller.Cliente.GestionarPedido;
 import controller.Admin.GestionarAdmin;
 import controller.Admin.GestionarReporte;
+import controller.Admin.GestionarMarca;
 
 public class GestionarFlujo {
+    GestionarMarca gestionarMarca = new GestionarMarca();
     GestionarReporte gestionarReporte = new GestionarReporte();
     GestionarCuenta gestionarCuenta = new GestionarCuenta();
     GestionarPedido gestionarPedido = new GestionarPedido();
@@ -61,6 +63,8 @@ public class GestionarFlujo {
                     menuAdminVenta();
                 case 4 ->
                     menuAdminReporte();
+                case 5 ->
+                    menuAccionMarca();
                 case 0 ->
                     System.out.println("¡Hasta pronto!");
             }
@@ -242,4 +246,23 @@ private void menuAdminReporte() {
         }
     } while (opcion != 0);
 }
+
+        // Gestionar Marcas
+    private void menuAccionMarca() {
+        int opcion;
+        do {
+            opcion = menuAdministrador.escogerAccionMarca();
+
+            switch (opcion) {
+                case 1 ->
+                    gestionarMarca.crearMarca();
+                case 2 ->
+                    gestionarMarca.eliminarMarca();
+                case 0 ->
+                    System.out.println("Volviendo...");
+            }
+        } while (opcion != 0);
+    }
 }
+
+    

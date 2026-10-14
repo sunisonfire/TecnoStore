@@ -22,10 +22,11 @@ public class MenuAdministrador {
                 | [2] Gestionar Clientes   |
                 | [3] Gestionar Ventas     |
                 | [4] Reportes y Analisis  |
+                | [5] Gestionar Marcas     |
                 | [0] Salir                |
                 +--------------------------+
 
-        """, 0, 4);
+        """, 0, 5);
 
     }
 
@@ -74,6 +75,21 @@ public class MenuAdministrador {
                                """, 0, 3);
 
     }
+    
+    public int escogerAccionMarca() {
+
+    return v.validarEnteroRango("""
+            +--------------------------+
+            |     GESTIONAR MARCAS     |
+            +--------------------------+
+            | [1] Crear Marca          |
+            | [2] Eliminar Marca       |
+            | [0] Volver               |
+            +--------------------------+
+
+    """, 0, 2);
+
+}
 
     public int opcionActualizarCelular() {
 

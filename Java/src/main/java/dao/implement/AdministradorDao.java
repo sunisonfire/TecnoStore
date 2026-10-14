@@ -174,7 +174,7 @@ public class AdministradorDao implements IAdministradorDao {
         return false;
     }
 
-    // ==================== U - update ====================
+    // U- UPDATE
 
     // Actualiza persona y administrador en una sola transacción
     @Override
@@ -205,7 +205,7 @@ public class AdministradorDao implements IAdministradorDao {
         return false;
     }
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
 
     // Borra el administrador y luego su persona
     @Override

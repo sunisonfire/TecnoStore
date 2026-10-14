@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Marca;
 
-/**
- * DAO de marca. Lo usa CelularDao para armar la marca de cada celular.
- */
+//USADO POR CELULAR
 public class MarcaDao implements IMarcaDao {
 
     private final Conexion conexion = Conexion.getInstancia();
@@ -28,7 +26,7 @@ public class MarcaDao implements IMarcaDao {
                 rs.getString("nombre"));
     }
 
-    // ==================== C - create ====================
+    // C - CREAR
     // Inserta y deja el id generado en el objeto
     @Override
     public boolean insertar(Marca marca) {
@@ -54,7 +52,7 @@ public class MarcaDao implements IMarcaDao {
         return false;
     }
 
-    // ==================== R - read ====================
+    // R - LEER
     @Override
     public Marca obtenerPorId(int idMarca) {
         return obtenerUna(SELECT_BASE + " WHERE id_marca = ?", idMarca);
@@ -97,13 +95,13 @@ public class MarcaDao implements IMarcaDao {
         return null;
     }
 
-    // ---------- Duplicados ----------
+    // DUPLICADOS
     @Override
     public boolean existeNombre(String nombre) {
         return existe("SELECT 1 FROM marca WHERE nombre = ?", nombre);
     }
 
-    // Para actualizar: ¿otra marca distinta ya usa este nombre?
+    // OTRA MARCA YA TIENE ESTE NOMBRE
     @Override
     public boolean existeNombreDeOtra(String nombre, int idMarca) {
         return existe("SELECT 1 FROM marca WHERE nombre = ? AND id_marca <> ?", nombre, idMarca);
@@ -124,7 +122,7 @@ public class MarcaDao implements IMarcaDao {
         return false;
     }
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
     @Override
     public boolean actualizar(Marca marca) {
         String sql = "UPDATE marca SET nombre = ? WHERE id_marca = ?";
@@ -140,7 +138,7 @@ public class MarcaDao implements IMarcaDao {
         return false;
     }
 
-    // ==================== D - delete ====================
+    // D -ELIMINAR
     @Override
     public boolean eliminar(int idMarca) {
         String sql = "DELETE FROM marca WHERE id_marca = ?";

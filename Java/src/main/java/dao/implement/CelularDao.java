@@ -14,10 +14,7 @@ import model.Celular.Gama;
 import model.Celular.SistemaOperativo;
 import model.Marca;
 
-/**
- * DAO de celular. Depende de MarcaDao para armar la marca de cada celular.
- * Los métodos de stock con Connection se usan dentro de la transacción de VentaDao.
- */
+//DEPENDE DE MARCA
 public class CelularDao implements ICelularDao {
 
     private final Conexion conexion = Conexion.getInstancia();
@@ -42,7 +39,7 @@ public class CelularDao implements ICelularDao {
             Gama.valueOf(rs.getString("gama")));
 }
 
-    // ==================== C - create ====================
+    // C - CREAR
 
     // Inserta y deja el id generado en el objeto
     @Override
@@ -78,7 +75,7 @@ public class CelularDao implements ICelularDao {
         return false;
     }
 
-    // ==================== R - read ====================
+    // R - LEER
 
     @Override
     public Celular obtenerPorId(int idCelular) {
@@ -129,7 +126,7 @@ public class CelularDao implements ICelularDao {
         return celulares;
     }
 
-    // ==================== U - update ====================
+    // U - ACTUALIZAR
 
     @Override
     public boolean actualizar(Celular celular) {
@@ -199,7 +196,7 @@ public class CelularDao implements ICelularDao {
         }
     }
 
-    // ==================== D - delete ====================
+    // D - ELIMINAR
 
     @Override
     public boolean eliminar(int idCelular) {
