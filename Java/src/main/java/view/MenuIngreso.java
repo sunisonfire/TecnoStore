@@ -18,5 +18,5 @@ public class MenuIngreso {
             """, 0, 2);
 }
 
-    
+
 }

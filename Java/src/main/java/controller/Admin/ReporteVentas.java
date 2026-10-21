@@ -1,4 +1,3 @@
-
 package controller.Admin;
 
 import dao.Interfaces.IVentaDao;
@@ -19,30 +18,28 @@ import java.util.List;
 import model.Celular;
 import model.Venta;
 import model.VentaMarca;
+import.Validaciones.Texto;
 public class ReporteVentas {
+
     private final IVentaDao ventaDao = new VentaDao();
     private final Conexion conexion = Conexion.getInstancia();
-    
+
     public void lol() {
-        int opcion;
-        do {
-            opcion = menuIngreso.marcasDisponibles();
 
-            switch (opcion) {
-                case 1 -> {
-                    if (gestionarAdmin.iniciarSesion()) {
-                        menuAdminAccion();   // solo entra si el login fue exitoso
-                        gestionarAdmin.cerrarSesion();
-                    }
-                }
+        String marcaInput = Validaciones.leerTexto("Ingrese la marca a buscar: ");
 
-                case 2 ->
-                    menuClienteLogin();
-                case 0 ->
-                    System.out.println("¡Hasta pronto!");
-            }
-        } while (opcion != 0);
+        List<Celular> filtrados = celularDao.obtenerTodos().stream()
+                .filter(c -> c.getMarca().equalsIgnoreCase(marcaInput))
+                .toList();
+
+        if (filtrados.isEmpty()) {
+            System.out.println("No se encontraron celulares de la marca: " + marcaInput);
+        } else {
+            filtrados.forEach(c -> System.out.printf("ID: %d | Modelo: %s | Precio: $%.2f | Stock: %d\n",
+                    c.getIdCelular(), c.getModelo(), c.getPrecio(), c.getStock()));
+        }
     }
+
     private VentaMarca mapear(ResultSet rs) throws SQLException {
 
         return new VentaM(
@@ -56,7 +53,7 @@ public class ReporteVentas {
                 rs.getDouble("total"),
                 detalleVentaDao.obtenerPorVenta(idVenta));
     }
-    
+
     private List<Venta> obtenerLista(String sql, Object parametro) {
         List<Venta> ventas = new ArrayList<>();
 
@@ -75,29 +72,29 @@ public class ReporteVentas {
         }
         return ventas;
     }
-    
+
     public List<Venta> obtener() {
         return obtenerLista(BASE_CONSULTA_MARCA + " ORDER BY v.fecha_hora DESC", null);
     }
-    
+
     private List<Venta> ventasValidas() {
-        
-        if(text=="Samsung"){
-            
-        }else if(){
-            
+
+        if (text == "Samsung") {
+
+        } else if () {
+
         }
         return ventaDao.obtenerTodos().stream()
                 .filter(v -> v.getMarca() == Venta.marca.Samsung)
                 .toList();
     }
-    
+
     public void reporteVentasMarca() {
         Map<String, Integer> validas = ventasValidas().stream()
                 .flatMap(v -> v.getDetalles().stream())
                 .collect(Collectors.groupingBy(
-                d -> d.getCelular().getMarca().getNombre() + " " + d.getCelular().getModelo(),
-                Collectors.summingInt(v -> v.getCantidad())));
+                        d -> d.getCelular().getMarca().getNombre() + " " + d.getCelular().getModelo(),
+                        Collectors.summingInt(v -> v.getCantidad())));
 
         if (validas.isEmpty()) {
             System.out.println("Todavía no hay ventas registradas.");
@@ -121,7 +118,7 @@ public class ReporteVentas {
 
         System.out.println("+--------------------------------------------------+");
     }
-    
+
     private static final String BASE_CONSULTA_MARCA = """
             select c.nombre as cliente, v.fecha_hora, dv.precio_unitario, m.nombre as marca from detalle_venta dv
             left join venta v
@@ -133,7 +130,5 @@ public class ReporteVentas {
             left join marca m
             on cc.id_marca=m.id_marca
             """;
-    
-    
 
 }
