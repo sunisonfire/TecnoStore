@@ -1,7 +1,9 @@
 package model;
 
+import java.io.Serializable;
 
-public class Celular {
+
+public class Celular implements Serializable{
     
     private int idCelular, stock;
     private String modelo;
@@ -9,7 +11,7 @@ public class Celular {
     private Marca marca;
     private SistemaOperativo sistemaOperativo;
     private Gama gama;
-
+     private static final long serialVersionUID = 1L;
     public enum SistemaOperativo {
         IOS, ANDROID
     }

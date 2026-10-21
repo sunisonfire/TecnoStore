@@ -30,7 +30,7 @@ public class Conexion {
     public Connection conexion() {
         Connection c = null;
         try {
-            c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tecnostore", "root", "jijijiji clave");
+            c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tecnostore", "root", "Enhypen!0");
             if (!mensajeMostrado) {
                 System.out.println("Conexion exitosa!");
                 mensajeMostrado = true;

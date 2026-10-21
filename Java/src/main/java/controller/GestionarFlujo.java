@@ -11,8 +11,10 @@ import controller.Cliente.GestionarPedido;
 import controller.Admin.GestionarAdmin;
 import controller.Admin.GestionarReporte;
 import controller.Admin.GestionarMarca;
+import controller.Admin.ReporteVentas;
 
 public class GestionarFlujo {
+
     GestionarMarca gestionarMarca = new GestionarMarca();
     GestionarReporte gestionarReporte = new GestionarReporte();
     GestionarCuenta gestionarCuenta = new GestionarCuenta();
@@ -25,6 +27,7 @@ public class GestionarFlujo {
     MenuIngreso menuIngreso = new MenuIngreso();
     GestionarAdmin gestionarAdmin = new GestionarAdmin();
 
+    ReporteVentas reporteVentas = new ReporteVentas();
     //Escoger tipo de persona (Admin o Cliente)
     public void inicio() {
         int opcion;
@@ -119,16 +122,18 @@ public class GestionarFlujo {
 
     //Gestionar Cliente
     private void menuAdminCliente() {
-    int opcion;
-    do {
-        opcion = menuAdministrador.opcionGestionarCliente();
+        int opcion;
+        do {
+            opcion = menuAdministrador.opcionGestionarCliente();
 
-        switch (opcion) {
-            case 1 -> gestionarCliente.listarCliente();
-            case 0 -> System.out.println("Volviendo...");
-        }
-    } while (opcion != 0);
-}
+            switch (opcion) {
+                case 1 ->
+                    gestionarCliente.listarCliente();
+                case 0 ->
+                    System.out.println("Volviendo...");
+            }
+        } while (opcion != 0);
+    }
 
     // Gestionar Venta
     private void menuAdminVenta() {
@@ -196,18 +201,22 @@ public class GestionarFlujo {
 
 // Pedidos del cliente
     private void menuClientePedido() {
-    int opcion;
-    do {
-        opcion = menuCliente.gestionPedido();
+        int opcion;
+        do {
+            opcion = menuCliente.gestionPedido();
 
-        switch (opcion) {
-            case 1 -> gestionarPedido.crearPedido(gestionarCuenta.getClienteActual());
-            case 2 -> gestionarPedido.verMisPedidos(gestionarCuenta.getClienteActual());
-            case 3 -> gestionarPedido.cancelarPedido(gestionarCuenta.getClienteActual());
-            case 0 -> System.out.println("Volviendo...");
-        }
-    } while (opcion != 0);
-}
+            switch (opcion) {
+                case 1 ->
+                    gestionarPedido.crearPedido(gestionarCuenta.getClienteActual());
+                case 2 ->
+                    gestionarPedido.verMisPedidos(gestionarCuenta.getClienteActual());
+                case 3 ->
+                    gestionarPedido.cancelarPedido(gestionarCuenta.getClienteActual());
+                case 0 ->
+                    System.out.println("Volviendo...");
+            }
+        } while (opcion != 0);
+    }
 
     // Actualizar datos
     private void menuActualizarDatos() {
@@ -232,22 +241,36 @@ public class GestionarFlujo {
         } while (opcion != 0);
     }
     // Reportes
-private void menuAdminReporte() {
-    int opcion;
-    do {
-        opcion = menuAdministrador.opcionReportes();
 
-        switch (opcion) {
-            case 1 -> gestionarReporte.celularesMasVendidos();
-            case 2 -> gestionarReporte.celularesStockBajo();
-            case 3 -> gestionarReporte.ventasTotales();
-            case 4 -> gestionarReporte.exportarVentas();
-            case 0 -> System.out.println("Volviendo...");
-        }
-    } while (opcion != 0);
-}
+    private void menuAdminReporte() {
+        int opcion;
+        do {
+            opcion = menuAdministrador.opcionReportes();
 
-        // Gestionar Marcas
+            switch (opcion) {
+                case 1 ->
+                    gestionarReporte.celularesMasVendidos();
+                case 2 ->
+                    gestionarReporte.celularesStockBajo();
+                case 3 ->
+                    gestionarReporte.ventasTotales();
+                case 4 ->
+                    gestionarReporte.exportarVentas();
+                case 5 ->
+                    gestionarReporte.verReporteStockBajo();
+                case 6 ->
+                    gestionarReporte.exportarVentasDat();
+                case 7 ->
+                    gestionarReporte.verVentasDat();
+                case 8 ->
+                    reporteVentas;
+                case 0 ->
+                    System.out.println("Volviendo...");
+            }
+        } while (opcion != 0);
+    }
+
+    // Gestionar Marcas
     private void menuAccionMarca() {
         int opcion;
         do {
@@ -264,5 +287,3 @@ private void menuAdminReporte() {
         } while (opcion != 0);
     }
 }
-
-    

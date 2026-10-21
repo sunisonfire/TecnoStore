@@ -110,18 +110,22 @@ public class MenuAdministrador {
     }
 
     public int opcionReportes() {
-        return v.validarEnteroRango("""
-            +--------------------------------+
-            |      REPORTES Y ANALISIS       |
-            +--------------------------------+
-            |  [1] Mas vendidos              |
-            |  [2] Stock bajo                |
-            |  [3] Ventas totales            |
-            |  [4] Exportar a archivo        |
-            |  [0] Volver                    |
-            +--------------------------------+
-            """, 0, 4);
-    }
+    return v.validarEnteroRango("""
+        +--------------------------------------+
+        |        REPORTES Y ANALISIS           |
+        +--------------------------------------+
+        |  [1] Mas vendidos                    |
+        |  [2] Stock bajo (genera .dat)        |
+        |  [3] Ventas totales                  |
+        |  [4] Exportar a archivo (.txt)       |
+        |  [5] Ver reporte de stock bajo       |
+        |  [6] Exportar ventas a .dat          |
+        |  [7] Ver ventas del .dat             |
+        |  [8] Examen                          |                    
+        |  [0] Volver                          |
+        +--------------------------------------+
+        """, 0, 8);
+}
 
     public String pedirUsername() {
         System.out.print("Usuario: ");

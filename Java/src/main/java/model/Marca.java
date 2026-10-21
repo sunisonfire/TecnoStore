@@ -1,10 +1,13 @@
 package model;
 
-public class Marca {
+import java.io.Serializable;
+
+public class Marca implements Serializable{
 
     private int idMarca;
     private String nombre;
-
+    
+     private static final long serialVersionUID = 1L;
     // Constructor completo para traer de la bd
     public Marca(int idMarca, String nombre) {
         this.idMarca = idMarca;

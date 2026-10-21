@@ -16,17 +16,18 @@ import model.Celular;
 import model.DetalleVenta;
 import model.Venta;
 import view.MenuAdministrador;
-
+import model.DatosVenta;
 public class GestionarReporte {
+
     // SE USA EN MAYUSCULA POR QUE ES FINAL
     private static final int STOCK_BAJO = 5;
-    private static final Path ARCHIVO =Path.of("C:/Users/ASUS/Documents/JAVAA/TecnoStoreD/Reporte/reporte_ventas.txt");
-    
+    private static final Path ARCHIVO = Path.of("C:/Users/ASUS/Documents/JAVAA/TecnoStoreD/Reporte/reporte_ventas.txt");
+
     private final IVentaDao ventaDao = new VentaDao();
     private final ICelularDao celularDao = new CelularDao();
     private final MenuAdministrador menu = new MenuAdministrador();
     private final GestionarCelular gestionarCelular = new GestionarCelular();
-    
+
     // STREAM API
     // TOP CELULARES MAS VENDIDOS (3)
     public void celularesMasVendidos() {
@@ -34,7 +35,7 @@ public class GestionarReporte {
                 .flatMap(v -> v.getDetalles().stream())
                 .collect(Collectors.groupingBy(
                         d -> d.getCelular().getMarca().getNombre() + " " + d.getCelular().getModelo(),
-                        Collectors.summingInt(DetalleVenta::getCantidad)));
+                        Collectors.summingInt(v -> v.getCantidad())));
 
         if (unidades.isEmpty()) {
             System.out.println("Todavía no hay ventas registradas.");
@@ -60,19 +61,21 @@ public class GestionarReporte {
     }
 
     // STOCK BAJO (<5)
+    // ALERTA DE STOCK BAJO (<= 5): consola + archivo stock_bajo.dat
     public void celularesStockBajo() {
-        List<Celular> bajos = celularDao.obtenerTodos().stream()
-                .filter(c -> c.getStock() < STOCK_BAJO)
-                .toList();
-
-        System.out.println("\n--- CELULARES CON STOCK BAJO (menos de " + STOCK_BAJO + ") ---");
-        if (bajos.isEmpty()) {
-            System.out.println("No hay celulares con stock inferior a " + STOCK_BAJO + " unidades.");
-            return;
-        }
-        gestionarCelular.mostrarCelulares(bajos);
+        new AlertaStockService().ejecutar(true);
     }
 
+// LEER EL REPORTE BINARIO stock_bajo.dat
+    public void verReporteStockBajo() {
+        new AlertaStockService().leerArchivo();
+    }
+
+    /*
+    REPORTE VENTAS POR MARCA
+    */
+    
+    
     // VENTAS TOTALES EXCLUYENDO LAS CANCELADAS
     public void ventasTotales() {
         List<Venta> ventas = ventasValidas();
@@ -166,5 +169,39 @@ public class GestionarReporte {
         return ventaDao.obtenerTodos().stream()
                 .filter(v -> v.getEstado() != Venta.Estado.CANCELADO)
                 .toList();
+    }
+
+    // EL ARCHIVO .DAT (mismo contenido del .txt, pero guardando los objetos)
+    public void exportarVentasDat() {
+        List<Venta> ventas = ventaDao.obtenerTodos();
+
+        if (ventas.isEmpty()) {
+            System.out.println("No hay ventas para exportar.");
+            return;
+        }
+
+        DatosVenta datos = new DatosVenta();
+        datos.guardarTodas(ventas);
+        System.out.println("Ventas guardadas en reporte_ventas.dat (" + ventas.size() + ")");
+    }
+
+// LEER EL .DAT Y MOSTRARLO
+    public void verVentasDat() {
+        List<Venta> ventas = new DatosVenta().getObtenerLista();
+
+        if (ventas.isEmpty()) {
+            System.out.println("No hay ventas en el archivo .dat. Exporte primero.");
+            return;
+        }
+
+        System.out.println("\n--- VENTAS DESDE reporte_ventas.dat ---");
+        menu.mostrarVentas(ventas);
+        ventas.forEach(menu::mostrarDetalleVenta);
+
+        double total = ventas.stream()
+                .filter(v -> v.getEstado() != Venta.Estado.CANCELADO)
+                .mapToDouble(Venta::getTotal)
+                .sum();
+        System.out.printf("%nTotal vendido (sin canceladas): $%,.2f%n", total);
     }
 }

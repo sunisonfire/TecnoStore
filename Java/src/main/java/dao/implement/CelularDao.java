@@ -229,4 +229,20 @@ public int obtenerUltimoId() {
     }
     return 0;
 }
+
+public int TraerVentas() {
+    String sql = "SELECT * from venta";
+
+    try (Connection c = conexion.conexion();
+         PreparedStatement ps = c.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        if (rs.next()) {
+            return rs.getInt(1);   // devuelve 0 si la tabla está vacía
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al obtener el último id: " + e.getMessage());
+    }
+    return 0;
+}
 }
