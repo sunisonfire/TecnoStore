@@ -226,6 +226,8 @@ public class GestionarCelular {
         guardar(celular, "Marca actualizada.");
     }
 
+    
+    
     public void actualizarStock() {
         Celular celular = buscarCelular();
         if (celular == null) {

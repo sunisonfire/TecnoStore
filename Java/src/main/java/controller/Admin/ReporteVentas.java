@@ -9,20 +9,40 @@ import java.util.stream.Collectors;
 import java.sql.ResultSet;
 import dao.Interfaces.IClienteDao;
 import dao.implement.Conexion;
-import dao.implement.PersonaDao;
+import dao.implement.PersonaDao
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Cliente;
+import model.Celular;
 import model.Venta;
 import model.VentaMarca;
 public class ReporteVentas {
     private final IVentaDao ventaDao = new VentaDao();
     private final Conexion conexion = Conexion.getInstancia();
     
+    public void lol() {
+        int opcion;
+        do {
+            opcion = menuIngreso.marcasDisponibles();
+
+            switch (opcion) {
+                case 1 -> {
+                    if (gestionarAdmin.iniciarSesion()) {
+                        menuAdminAccion();   // solo entra si el login fue exitoso
+                        gestionarAdmin.cerrarSesion();
+                    }
+                }
+
+                case 2 ->
+                    menuClienteLogin();
+                case 0 ->
+                    System.out.println("¡Hasta pronto!");
+            }
+        } while (opcion != 0);
+    }
     private VentaMarca mapear(ResultSet rs) throws SQLException {
 
         return new VentaM(
@@ -61,6 +81,12 @@ public class ReporteVentas {
     }
     
     private List<Venta> ventasValidas() {
+        
+        if(text=="Samsung"){
+            
+        }else if(){
+            
+        }
         return ventaDao.obtenerTodos().stream()
                 .filter(v -> v.getMarca() == Venta.marca.Samsung)
                 .toList();
@@ -109,4 +135,5 @@ public class ReporteVentas {
             """;
     
     
+
 }

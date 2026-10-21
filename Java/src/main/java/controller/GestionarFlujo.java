@@ -263,7 +263,7 @@ public class GestionarFlujo {
                 case 7 ->
                     gestionarReporte.verVentasDat();
                 case 8 ->
-                    reporteVentas;
+                    reporteVentas.lol();
                 case 0 ->
                     System.out.println("Volviendo...");
             }

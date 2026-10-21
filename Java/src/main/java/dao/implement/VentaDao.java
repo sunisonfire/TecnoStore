@@ -13,10 +13,7 @@ import model.Cliente;
 import model.DetalleVenta;
 import model.Venta;
 
-/**
- * DAO de venta. Insertar y actualizar guardan la venta y sus detalles en una
- * sola transacción; si algo falla, no queda nada a medias.
- */
+
 public class VentaDao implements IVentaDao {
 
     private final CelularDao celularDao = new CelularDao();
